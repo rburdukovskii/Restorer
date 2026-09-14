@@ -1,0 +1,18 @@
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/websocket-driver-0.8.2/ext/websocket-driver
+/usr/bin/ruby3.3 -I/usr/lib/ruby/vendor_ruby extconf.rb
+creating Makefile
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/websocket-driver-0.8.2/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-f90m8d sitelibdir\=./.gem.20260914-20224-f90m8d clean
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/websocket-driver-0.8.2/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-f90m8d sitelibdir\=./.gem.20260914-20224-f90m8d
+compiling websocket_mask.c
+linking shared-object websocket_mask.so
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/websocket-driver-0.8.2/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-f90m8d sitelibdir\=./.gem.20260914-20224-f90m8d install
+/usr/bin/install -c -m 0755 websocket_mask.so ./.gem.20260914-20224-f90m8d
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/websocket-driver-0.8.2/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-f90m8d sitelibdir\=./.gem.20260914-20224-f90m8d clean

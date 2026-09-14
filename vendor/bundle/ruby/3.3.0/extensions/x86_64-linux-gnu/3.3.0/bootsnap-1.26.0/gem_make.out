@@ -1,0 +1,23 @@
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.26.0/ext/bootsnap
+/usr/bin/ruby3.3 -I/usr/lib/ruby/vendor_ruby extconf.rb
+checking for fdatasync() in unistd.h... yes
+checking for fstatat() in sys/stat.h... yes
+checking for whether -D_GNU_SOURCE is accepted as CPPFLAGS... yes
+checking for whether -O3 is accepted as CFLAGS... yes
+checking for whether -std=c99 is accepted as CFLAGS... yes
+creating Makefile
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.26.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-ov2ugb sitelibdir\=./.gem.20260914-20224-ov2ugb clean
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.26.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-ov2ugb sitelibdir\=./.gem.20260914-20224-ov2ugb
+compiling bootsnap.c
+linking shared-object bootsnap/bootsnap.so
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.26.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-ov2ugb sitelibdir\=./.gem.20260914-20224-ov2ugb install
+/usr/bin/install -c -m 0755 bootsnap.so ./.gem.20260914-20224-ov2ugb/bootsnap
+
+current directory: /home/abuwadu/projects/web_project/Restorer/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.26.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260914-20224-ov2ugb sitelibdir\=./.gem.20260914-20224-ov2ugb clean
