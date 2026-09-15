@@ -1,1 +1,50 @@
-<h1>Главная</h1>
+<!-- app/views/pages/home.html.erb или app/views/home/index.html.erb -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center gap-12">
+      <!-- Левая часть: текст -->
+      <div class="w-full md:w-1/2">
+        <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          Верните жизнь старым фотографиям
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 max-w-lg">
+          Restorer использует современные алгоритмы ИИ, чтобы убрать царапины, восстановить цвета и повысить чёткость даже самых повреждённых снимков.
+        </p>
+        
+        <%= link_to "Загрузить фото", upload_path, class: "inline-flex items-center px-8 py-4 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300" %>
+      </div>
+
+      <!-- Правая часть: иллюстрация или заглушка -->
+      <div class="w-full md:w-1/2 flex justify-center">
+        <!-- Сюда позже можно вставить реальное фото или SVG-иллюстрацию -->
+        <div class="w-full max-w-md h-64 bg-white border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400">
+          <span>Зона для превью фото</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Дополнительный блок преимуществ (опционально) -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Как это работает</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-6 border border-gray-200 rounded-lg text-center">
+        <div class="text-3xl mb-4">📤</div>
+        <h3 class="font-bold text-gray-900 mb-2">Загрузка</h3>
+        <p class="text-gray-600">Выберите фото с устройства или перетащите его в зону загрузки.</p>
+      </div>
+      <div class="p-6 border border-gray-200 rounded-lg text-center">
+        <div class="text-3xl mb-4">🤖</div>
+        <h3 class="font-bold text-gray-900 mb-2">Обработка</h3>
+        <p class="text-gray-600">ИИ анализирует изображение, убирает шумы и восстанавливает детали.</p>
+      </div>
+      <div class="p-6 border border-gray-200 rounded-lg text-center">
+        <div class="text-3xl mb-4">🖼️</div>
+        <h3 class="font-bold text-gray-900 mb-2">Результат</h3>
+        <p class="text-gray-600">Скачайте восстановленное фото в высоком качестве.</p>
+      </div>
+    </div>
+  </div>
+</section>

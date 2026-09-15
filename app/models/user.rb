@@ -7,6 +7,8 @@ class User < ApplicationRecord
    # Список ролей
   ROLES = %w[admin user guest].freeze
 
+  before_save :set_default_role, if: :new_record?
+
   # Проверка роли
   def admin?
     role == 'admin'
@@ -19,4 +21,10 @@ class User < ApplicationRecord
   def guest?
     role == 'guest'
   end
+
+  private
+
+def set_default_role
+  self.role ||= 'user'
+end
 end
