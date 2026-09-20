@@ -13,6 +13,7 @@
     <%# PWA manifest %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -22,7 +23,7 @@
   </head>
 
   <body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
-    <!-- Сюда мы позже подключим шапку (навигацию) -->
+    <!-- Подключаем шапку (навигацию) -->
     <%= render "layouts/navigation" %>
 
     <main class="flex-grow">
@@ -31,7 +32,7 @@
       </div>
     </main>
 
-    <!-- Подвал (опционально) -->
+    <!-- Подвал -->
     <%= render "layouts/footer" if File.exist?(Rails.root.join("app/views/layouts/_footer.html.erb")) %>
   </body>
 </html>
