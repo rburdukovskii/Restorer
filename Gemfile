@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem "json", "~> 2.6.3"
 gem 'tailwindcss-rails'
 
