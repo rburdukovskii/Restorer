@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_many :uploads, dependent: :destroy
+
    # Список ролей
   ROLES = %w[admin user guest].freeze
 

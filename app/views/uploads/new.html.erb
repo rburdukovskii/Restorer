@@ -1,4 +1,17 @@
-<div>
-  <h1 class="font-bold text-4xl">Uploads#new</h1>
-  <p>Find me in app/views/uploads/new.html.erb</p>
-</div>
+<section class="max-w-2xl mx-auto px-6 py-16">
+  <h1 class="text-3xl font-bold text-center mb-2">Загрузите фото</h1>
+
+  <%= form_with model: @upload, url: uploads_path, multipart: true, class: "space-y-6" do |f| %>
+    <% if @upload.errors.any? %>
+      <div class="p-4 rounded-lg bg-red-50 text-red-700 text-sm">
+        <%= @upload.errors.full_messages.join(", ") %>
+      </div>
+    <% end %>
+
+    <%= render "components/file_upload", form: f, field: :original %>
+
+    <%= f.submit "Обработать",
+        class: "w-full cursor-pointer text-white font-semibold py-3 px-6 rounded-xl transition hover:opacity-90",
+        style: "background: linear-gradient(135deg, #4F46E5, #EC4899);" %>
+  <% end %>
+</section>

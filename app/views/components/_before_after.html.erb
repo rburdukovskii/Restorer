@@ -1,0 +1,22 @@
+<div data-controller="before-after"
+     class="relative w-full aspect-video rounded-2xl overflow-hidden select-none cursor-ew-resize shadow-xl">
+
+  <%= image_tag after_url, class: "absolute inset-0 w-full h-full object-cover", alt: "После" %>
+
+  <div data-before-after-target="overlay"
+       class="absolute inset-0 overflow-hidden"
+       style="width: 50%">
+    <%= image_tag before_url, class: "w-full h-full object-cover", alt: "До" %>
+  </div>
+
+  <div data-before-after-target="handle"
+       class="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg"
+       style="left: 50%">
+    <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center">
+      ⇄
+    </div>
+  </div>
+
+  <span class="absolute top-3 left-3 px-2 py-1 bg-black/60 text-white text-xs rounded">До</span>
+  <span class="absolute top-3 right-3 px-2 py-1 bg-black/60 text-white text-xs rounded">После</span>
+</div>

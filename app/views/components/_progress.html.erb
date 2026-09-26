@@ -1,0 +1,14 @@
+<div data-controller="progress"
+     data-progress-url-value="<%= status_url %>"
+     class="w-full">
+  <div class="flex justify-between text-sm text-gray-600 mb-2">
+    <span data-progress-target="label">Обрабатываем...</span>
+    <span data-progress-target="percent">0%</span>
+  </div>
+
+  <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+    <div data-progress-target="bar"
+         class="h-full transition-all duration-300"
+         style="width: 0%; background: linear-gradient(135deg, #4F46E5, #EC4899);"></div>
+  </div>
+</div>
