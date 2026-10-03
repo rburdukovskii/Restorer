@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_100342) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_133458) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -39,19 +39,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_100342) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "uploads", force: :cascade do |t|
+  create_table "albums", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "progress"
-    t.string "status"
+    t.text "description"
+    t.string "name"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_albums_on_user_id"
+  end
+
+  create_table "photo_albums", force: :cascade do |t|
+    t.integer "album_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "upload_id", null: false
+    t.index ["album_id"], name: "index_photo_albums_on_album_id"
+    t.index ["upload_id", "album_id"], name: "index_photo_albums_on_upload_id_and_album_id", unique: true
+    t.index ["upload_id"], name: "index_photo_albums_on_upload_id"
+  end
+
+  create_table "photo_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "upload_id", null: false
+    t.index ["tag_id"], name: "index_photo_tags_on_tag_id"
+    t.index ["upload_id"], name: "index_photo_tags_on_upload_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "name"], name: "index_tags_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_tags_on_user_id"
+  end
+
+  create_table "uploads", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.boolean "favorite", default: false, null: false
+    t.integer "progress"
+    t.string "status"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["created_at"], name: "index_uploads_on_created_at"
+    t.index ["favorite"], name: "index_uploads_on_favorite"
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
+    t.text "bio"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "name"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
@@ -63,5 +107,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_100342) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "albums", "users"
+  add_foreign_key "photo_albums", "albums"
+  add_foreign_key "photo_albums", "uploads"
+  add_foreign_key "photo_tags", "tags"
+  add_foreign_key "photo_tags", "uploads"
+  add_foreign_key "tags", "users"
   add_foreign_key "uploads", "users"
 end
