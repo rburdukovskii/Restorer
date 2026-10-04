@@ -9,7 +9,16 @@ class Album < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
 
   def cover_image
-    cover.attached? ? cover : uploads.first&.processed || uploads.first&.original
+    return cover if cover.attached?
+
+    first_upload = uploads.first
+    return nil unless first_upload
+
+    if first_upload.processed.attached?
+      first_upload.processed
+    else
+      first_upload.original
+    end
   end
 
   def photos_count

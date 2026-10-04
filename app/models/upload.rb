@@ -16,6 +16,10 @@ class Upload < ApplicationRecord
   STATUSES = %w[pending processing completed failed].freeze
 
   scope :recent, -> { order(created_at: :desc).limit(10) }
+  scope :favorites, -> { where(favorite: true) }
+  scope :with_tag,  ->(name) { joins(:tags).where(tags: { name: name.downcase }) }
+  scope :in_album,  ->(album_id) { joins(:photo_albums).where(photo_albums: { album_id: album_id }) }
+  scope :without_album, -> { left_joins(:photo_albums).where(photo_albums: { id: nil }) }
 
   def completed?
     status == "completed"
@@ -37,7 +41,9 @@ class Upload < ApplicationRecord
   end
 
   def remove_tag(name)
-    tags.delete(user.tags.find_by(name: name.strip.downcase))
+    return if name.nil?
+    tag_to_remove = user.tags.find_by(name: name.strip.downcase)
+    tags.delete(tag_to_remove) if tag_to_remove
   end
 
   private
