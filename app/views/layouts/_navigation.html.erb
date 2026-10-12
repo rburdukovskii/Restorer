@@ -2,9 +2,20 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
     <%= link_to "Restorer", root_path, class: "font-bold text-xl text-blue-600 hover:text-blue-700" %>
 
+    <nav class="hidden md:flex items-center gap-6 text-sm text-gray-600">
+      <%= link_to "Галерея", gallery_path, class: "hover:text-gray-900 #{'text-blue-600 font-semibold' if current_page?(gallery_path)}" %>
+      <%= link_to "Профиль", profile_path, class: "hover:text-gray-900 #{'text-blue-600 font-semibold' if current_page?(profile_path)}" %>
+    </nav>
+
     <div class="flex items-center space-x-4">
       <% if user_signed_in? %>
-        <p class="text-sm text-gray-700">Welcome, <%= current_user.email %></p>
+
+        <%= link_to profile_path, class: "flex items-center gap-2" do %>
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+                <span class="text-white text-xs font-bold"><%= current_user.initials %></span>
+              </div>
+              <span class="text-sm font-medium text-gray-900"><%= current_user.display_name %></span>
+        <% end %>
         
         <% if current_user.admin? %>
           <%= link_to 'Admin Dashboard', admin_path, class: "text-sm text-blue-600 hover:underline" %>

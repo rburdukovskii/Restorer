@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_upload, only: [:show, :status]
+  before_action :set_upload, only: [:show, :status, :destroy, :toggle_favorite, :download]
 
   def new
     @upload = current_user.uploads.build
@@ -28,6 +28,27 @@ class UploadsController < ApplicationController
       status: @upload.status,
       redirect_url: (@upload.processed.attached? ? upload_path(@upload) : nil)
     }
+  end
+
+  def destroy
+    @upload.destroy
+    redirect_to gallery_path, notice: "Фото удалено"
+  end
+
+  def toggle_favorite
+    @upload.update(favorite: !@upload.favorite)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: gallery_path }
+    end
+  end
+
+  def download
+    attachment = @upload.processed.attached? ? @upload.processed : @upload.original
+    send_data attachment.download,
+              filename: "restored_#{@upload.id}.jpg",
+              type: attachment.content_type
   end
 
   private

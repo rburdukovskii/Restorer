@@ -1,0 +1,87 @@
+<section class="max-w-4xl mx-auto px-6 py-12">
+
+  <%# Блок 1: Личная информация %>
+  <div class="bg-white rounded-2xl shadow-md p-8 flex items-center gap-6">
+    <div class="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center
+                bg-gradient-to-br from-indigo-500 to-pink-500 shrink-0">
+      <% if @user.avatar.attached? %>
+        <%= image_tag @user.avatar, class: "w-full h-full object-cover" %>
+      <% else %>
+        <span class="text-white text-3xl font-bold"><%= @user.initials %></span>
+      <% end %>
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <h1 class="text-2xl font-bold text-gray-900 truncate">
+        <%= @user.display_name %>
+      </h1>
+      <p class="text-gray-500 truncate"><%= @user.email %></p>
+      <p class="text-sm text-gray-400 mt-1">
+        На сайте с <%= l(@user.created_at, format: :long) rescue @user.created_at.strftime("%d.%m.%Y") %>
+      </p>
+    </div>
+
+    <%= link_to "Редактировать", edit_profile_path,
+        class: "shrink-0 px-5 py-2 rounded-lg border-2 border-blue-600 text-blue-600
+               hover:bg-blue-50 font-semibold transition" %>
+  </div>
+
+  <%# Блок 2: Статистика %>
+  <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <%= link_to gallery_path, class: "bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition" do %>
+      <div class="text-3xl font-bold text-gray-900"><%= @stats[:photos] %></div>
+      <div class="text-sm text-gray-500 mt-1">Фото</div>
+    <% end %>
+
+    <%= link_to gallery_path(album: "all"), class: "bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition" do %>
+      <div class="text-3xl font-bold text-gray-900"><%= @stats[:albums] %></div>
+      <div class="text-sm text-gray-500 mt-1">Альбомов</div>
+    <% end %>
+
+    <%= link_to gallery_path(tag: "all"), class: "bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition" do %>
+      <div class="text-3xl font-bold text-gray-900"><%= @stats[:tags] %></div>
+      <div class="text-sm text-gray-500 mt-1">Тегов</div>
+    <% end %>
+
+    <%= link_to gallery_path(favorites: 1), class: "bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition" do %>
+      <div class="text-3xl font-bold text-gray-900"><%= @stats[:favorites] %></div>
+      <div class="text-sm text-gray-500 mt-1">Избранных</div>
+    <% end %>
+  </div>
+
+  <%# Блок 3: Быстрые действия %>
+  <div class="mt-8 flex flex-wrap gap-4">
+    <%= link_to "Загрузить фото", new_upload_path,
+        class: "px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm"
+    %>
+
+    <%= link_to "Открыть галерею", gallery_path,
+        class: "px-6 py-3 rounded-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold transition" %>
+  </div>
+
+  <%# Блок 4: Последние фото %>
+  <% if @recent.any? %>
+    <div class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Последние фото</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <% @recent.each do |photo| %>
+          <%= link_to upload_path(photo), class: "block" do %>
+            <%= image_tag (photo.processed.attached? ? photo.processed : photo.original),
+                class: "w-full aspect-square object-cover rounded-lg hover:opacity-90 transition" %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="mt-6 text-center">
+        <%= link_to "Смотреть всю галерею →", gallery_path,
+            class: "text-blue-600 hover:text-blue-700 font-medium" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="mt-12 p-12 text-center bg-gray-50 rounded-2xl">
+      <p class="text-gray-500">У вас пока нет фото</p>
+      <%= link_to "Загрузить первое фото", new_upload_path,
+          class: "mt-4 inline-block px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm" %>
+    </div>
+  <% end %>
+
+</section>
