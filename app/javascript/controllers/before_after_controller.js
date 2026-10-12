@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["overlay", "handle"]
+  static targets = ["before", "handle"]
 
   connect() {
     this._onMove = this.#onMove.bind(this)
@@ -28,7 +28,8 @@ export default class extends Controller {
     const rect = this.element.getBoundingClientRect()
     let pos = ((clientX - rect.left) / rect.width) * 100
     pos = Math.min(100, Math.max(0, pos))
-    this.overlayTarget.style.width = `${pos}%`
+
+    this.beforeTarget.style.clipPath = `inset(0 ${100 - pos}% 0 0)`
     this.handleTarget.style.left = `${pos}%`
   }
 }

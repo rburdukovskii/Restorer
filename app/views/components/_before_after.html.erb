@@ -1,14 +1,19 @@
 <div data-controller="before-after"
      class="relative w-full aspect-video rounded-2xl overflow-hidden select-none cursor-ew-resize shadow-xl">
 
-  <%= image_tag after_url, class: "absolute inset-0 w-full h-full object-cover", alt: "После" %>
+  <%# Фото "После" — снизу, всегда полное %>
+  <%= image_tag after_url,
+      class: "absolute inset-0 w-full h-full object-cover",
+      alt: "После" %>
 
-  <div data-before-after-target="overlay"
-       class="absolute inset-0 overflow-hidden"
-       style="width: 50%">
-    <%= image_tag before_url, class: "w-full h-full object-cover", alt: "До" %>
-  </div>
+  <%# Фото "До" — сверху, обрезается clip-path %>
+  <%= image_tag before_url,
+      data: { before_after_target: "before" },
+      class: "absolute inset-0 w-full h-full object-cover",
+      style: "clip-path: inset(0 50% 0 0);",
+      alt: "До" %>
 
+  <%# Ползунок %>
   <div data-before-after-target="handle"
        class="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg"
        style="left: 50%">

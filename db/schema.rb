@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_133458) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_115044) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -80,6 +80,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_133458) do
     t.datetime "created_at", null: false
     t.text "description"
     t.boolean "favorite", default: false, null: false
+    t.string "filter_name"
+    t.json "filter_params", default: {}, null: false
     t.integer "progress"
     t.string "status"
     t.string "title"
@@ -87,6 +89,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_133458) do
     t.integer "user_id", null: false
     t.index ["created_at"], name: "index_uploads_on_created_at"
     t.index ["favorite"], name: "index_uploads_on_favorite"
+    t.index ["filter_name"], name: "index_uploads_on_filter_name"
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 

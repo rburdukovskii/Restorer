@@ -1,3 +1,4 @@
+//v2
 import { application } from "controllers/application"
 
 import DropzoneController from "controllers/dropzone_controller"
@@ -11,3 +12,6 @@ application.register("before-after", BeforeAfterController)
 
 import ProgressController from "controllers/progress_controller"
 application.register("progress", ProgressController)
+
+import FilterPickerController from "controllers/filter_picker_controller"
+application.register("filter-picker", FilterPickerController)

@@ -8,8 +8,9 @@ class UploadsController < ApplicationController
 
   def create
     @upload = current_user.uploads.build(upload_params)
-    @upload.status = "pending"
-    @upload.progress = 0
+    @upload.status      = "pending"
+    @upload.progress    = 0
+    @upload.filter_name = params[:upload][:filter_name].presence || Filter.default
 
     if @upload.save
       ProcessUploadJob.perform_later(@upload.id)
@@ -17,7 +18,7 @@ class UploadsController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
-  end
+end
 
   def show
   end
