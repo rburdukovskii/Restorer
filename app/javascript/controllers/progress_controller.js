@@ -29,6 +29,20 @@ export default class extends Controller {
       clearInterval(this.timer)
       this.labelTarget.textContent = "Готово!"
       if (data.redirect_url) window.location.href = data.redirect_url
+      return
+    }
+
+    if (data.status === "failed") {
+      clearInterval(this.timer)
+      this.labelTarget.textContent = "Ошибка обработки"
+      this.labelTarget.classList.add("text-red-600")
+      this.barTarget.style.background = "#EF4444"
+      // Показать сообщение
+      const errorMsg = document.createElement("p")
+      errorMsg.className = "text-xs text-red-500 mt-2"
+      errorMsg.textContent = "Попробуйте другой фильтр или загрузите фото ещё раз."
+      this.element.appendChild(errorMsg)
+      return
     }
   }
 }

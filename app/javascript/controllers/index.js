@@ -15,3 +15,12 @@ application.register("progress", ProgressController)
 
 import FilterPickerController from "controllers/filter_picker_controller"
 application.register("filter-picker", FilterPickerController)
+
+import BulkSelectController from "controllers/bulk_select_controller"
+application.register("bulk-select", BulkSelectController)
+
+import AlbumModalController from "controllers/album_modal_controller"
+application.register("album-modal", AlbumModalController)
+
+import AlbumPhotoPickerController from "controllers/album_photo_picker_controller"
+application.register("album-photo-picker", AlbumPhotoPickerController)

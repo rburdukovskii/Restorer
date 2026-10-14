@@ -7,11 +7,18 @@ Rails.application.routes.draw do
 
   get "gallery", to: "gallery#index", as: :gallery
 
-  resources :uploads, only: [:new, :create, :show] do
+  resources :uploads, only: [:new, :create, :show, :destroy] do
     member do
       get :status
       patch :toggle_favorite
       get :download
+      get   :add_to_album
+      post  :assign_to_album
+    end
+
+    collection do
+      delete :bulk_destroy
+      post   :bulk_add_to_album 
     end
   end
 
@@ -19,6 +26,7 @@ Rails.application.routes.draw do
     member do
       post :add_upload
       delete :remove_upload
+      post   :bulk_add_uploads
     end
   end
 

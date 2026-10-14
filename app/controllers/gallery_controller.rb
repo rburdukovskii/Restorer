@@ -21,7 +21,7 @@ class GalleryController < ApplicationController
                else               @uploads.reorder(created_at: :desc)
                end
 
-    @uploads = @uploads.page(params[:page]).per(24) if @uploads.respond_to?(:page)
+    @uploads = @uploads.page(params[:page]).per(12) if @uploads.respond_to?(:page)
 
     @albums = current_user.albums.recent
     @tags   = current_user.tags.order(:name)

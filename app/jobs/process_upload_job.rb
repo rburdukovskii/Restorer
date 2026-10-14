@@ -15,7 +15,7 @@ class ProcessUploadJob < ApplicationJob
 
       upload.processed.attach(
         io: processed_file,
-        filename: "restored_#{upload.id}.jpg",
+        filename: "processed_#{upload.id}.jpg",
         content_type: "image/jpeg"
       )
 

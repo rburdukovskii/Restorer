@@ -15,7 +15,7 @@ class Upload < ApplicationRecord
 
   STATUSES = %w[pending processing completed failed].freeze
 
-  scope :recent, -> { order(created_at: :desc).limit(10) }
+  scope :recent, -> { order(created_at: :desc) }
   scope :favorites, -> { where(favorite: true) }
   scope :with_tag,  ->(name) { joins(:tags).where(tags: { name: name.downcase }) }
   scope :in_album,  ->(album_id) { joins(:photo_albums).where(photo_albums: { album_id: album_id }) }

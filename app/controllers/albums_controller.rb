@@ -1,6 +1,6 @@
 class AlbumsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload]
+  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload, :bulk_add_uploads]
 
   def new
     @album = current_user.albums.build
@@ -45,6 +45,26 @@ class AlbumsController < ApplicationController
     upload = current_user.uploads.find(params[:upload_id])
     @album.uploads.delete(upload)
     redirect_to album_path(@album), notice: "Фото убрано из альбома"
+  end
+
+  def bulk_add_uploads
+    upload_ids = Array(params[:upload_ids]).map(&:to_i).reject(&:zero?)
+
+    if upload_ids.empty?
+      return render json: { error: "Не выбрано ни одного фото" }, status: :unprocessable_entity
+    end
+
+    uploads = current_user.uploads.where(id: upload_ids)
+    count = 0
+
+    uploads.each do |upload|
+      unless @album.uploads.include?(upload)
+        @album.uploads << upload
+        count += 1
+      end
+    end
+
+    render json: { success: true, message: "Добавлено фото: #{count}" }
   end
 
   private

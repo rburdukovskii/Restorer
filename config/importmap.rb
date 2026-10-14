@@ -10,3 +10,6 @@ pin "controllers/image_preview_controller", to: "controllers/image_preview_contr
 pin "controllers/before_after_controller", to: "controllers/before_after_controller.js"
 pin "controllers/progress_controller", to: "controllers/progress_controller.js"
 pin "controllers/filter_picker_controller", to: "controllers/filter_picker_controller.js"
+pin "controllers/bulk_select_controller", to: "controllers/bulk_select_controller.js"
+pin "controllers/album_modal_controller", to: "controllers/album_modal_controller.js"
+pin "controllers/album_photo_picker_controller", to: "controllers/album_photo_picker_controller.js"
