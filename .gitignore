@@ -36,3 +36,9 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+/bin/ai/
+realesrgan-ncnn-vulkan-*.zip
+*.bin
+*.param
+*.mp4
