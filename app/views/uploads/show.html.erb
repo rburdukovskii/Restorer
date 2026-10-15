@@ -11,6 +11,50 @@
     </div>
   <% end %>
 
+  <%# Теги %>
+  <div data-controller="tag-input"
+      data-tag-input-add-url-value="<%= add_tag_upload_path(@upload) %>"
+      data-tag-input-remove-url-value="<%= remove_tag_upload_path(@upload) %>"
+      class="mt-8 p-6 bg-white rounded-2xl shadow-sm">
+
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">Теги</h3>
+
+    <%# Список тегов %>
+    <div data-tag-input-target="tags" class="flex flex-wrap gap-2 mb-4">
+      <% @upload.tags.each do |tag| %>
+        <span data-tag-id="<%= tag.id %>"
+              class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm">
+          <%= tag.name %>
+          <button type="button"
+                  data-action="click->tag-input#remove"
+                  data-tag-id="<%= tag.id %>"
+                  data-tag-name="<%= tag.name %>"
+                  class="text-blue-500 hover:text-red-500 transition">
+            &times;
+          </button>
+        </span>
+      <% end %>
+    </div>
+
+    <%# Поле для добавления %>
+    <form data-action="submit->tag-input#add" class="flex gap-2">
+      <input type="text"
+            data-tag-input-target="input"
+            placeholder="Добавить тег..."
+            autocomplete="off"
+            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg
+                    focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm">
+      <button type="submit"
+              class="px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer">
+        Добавить
+      </button>
+    </form>
+
+    <p class="mt-2 text-xs text-gray-400">
+      Например: «природа», «отпуск 2026», «семья»
+    </p>
+  </div>
+
   <% if @upload.processed.attached? %>
     <div class="mt-8 text-center">
       <%= link_to "Скачать результат",

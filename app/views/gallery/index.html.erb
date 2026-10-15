@@ -19,6 +19,15 @@
           class: "px-5 py-2 rounded-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 hover:bg-blue-50 transition" do %>
         + Создать альбом
       <% end %>
+
+      <%= link_to tags_path,
+          class: "px-5 py-2 rounded-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 hover:bg-blue-50 transition flex items-center gap-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>
+        Теги
+      <% end %>
     </div>
   </div>
 
@@ -40,6 +49,45 @@
         class: "px-4 py-1.5 rounded-full text-sm font-medium transition
                #{gallery_filter_active?(:without_album) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" do %>
       Без альбома
+    <% end %>
+
+    <% if @tags.any? %>
+      <div class="relative" data-controller="dropdown">
+        <button type="button"
+                data-action="click->dropdown#toggle"
+                class="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition
+                      <%= params[:tag].present? ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
+          <span><%= params[:tag].present? ? "##{params[:tag]}" : "# Теги" %></span>
+          <svg class="w-3 h-3 transition-transform" data-dropdown-target="arrow"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <%# Список %>
+        <div data-dropdown-target="menu"
+            class="hidden absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 z-30 max-h-80 overflow-y-auto">
+
+          <%# Все теги %>
+          <div class="p-2">
+            <%= link_to gallery_path,
+                class: "block px-3 py-2 rounded-lg text-sm transition
+                      #{params[:tag].blank? ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}" do %>
+              Все фото
+            <% end %>
+
+            <% @tags.each do |tag| %>
+              <%= link_to gallery_path(tag: tag.name),
+                  class: "flex items-center justify-between px-3 py-2 rounded-lg text-sm transition
+                        #{params[:tag] == tag.name ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}" do %>
+                <span>#<%= tag.name %></span>
+                <span class="text-xs text-gray-400"><%= tag.uploads.count %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
     <% end %>
 
     <%= form_with url: gallery_path, method: :get, class: "flex-1 min-w-[200px]" do |f| %>
@@ -153,13 +201,13 @@
             </div>
 
             <%# Нижняя панель с названием %>
-            <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-              <div class="text-white text-sm font-medium truncate">
+            <div class="absolute bottom-0 left-0 right-0 px-3 py-2 bg-black/40 backdrop-blur-sm">
+              <div class="text-white text-sm font-semibold truncate">
                 <%= photo.display_title %>
               </div>
               <% if photo.tags.any? %>
-                <div class="text-white/70 text-xs truncate mt-0.5">
-                  <%= photo.tags.map(&:name).join(", ") %>
+                <div class="text-white/80 text-xs truncate mt-0.5">
+                  <%= photo.tags.map { |t| "##{t.name}" }.join(" ") %>
                 </div>
               <% end %>
             </div>

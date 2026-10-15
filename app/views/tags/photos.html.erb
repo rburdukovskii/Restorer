@@ -1,0 +1,37 @@
+<section class="max-w-7xl mx-auto px-6 py-12">
+
+  <%# Breadcrumb %>
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+    <%= link_to "Теги", tags_path, class: "hover:text-gray-900 transition" %>
+    <span class="text-gray-300">/</span>
+    <span class="text-gray-900 font-medium">#<%= @tag.name %></span>
+  </nav>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">#<%= @tag.name %></h1>
+      <p class="text-gray-500 mt-1"><%= @uploads.count %> фото</p>
+    </div>
+
+    <%= link_to "Все теги", tags_path,
+        class: "px-5 py-2 rounded-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 hover:bg-blue-50 transition" %>
+  </div>
+
+  <% if @uploads.any? %>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <% @uploads.each do |photo| %>
+        <div class="group relative rounded-xl overflow-hidden bg-gray-100">
+          <%= link_to upload_path(photo) do %>
+            <%= image_tag (photo.processed.attached? ? photo.processed : photo.original),
+                class: "w-full aspect-square object-cover group-hover:scale-105 transition" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-20 bg-gray-50 rounded-2xl">
+      <p class="text-gray-500">Нет фото с этим тегом</p>
+    </div>
+  <% end %>
+
+</section>

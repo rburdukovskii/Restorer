@@ -24,3 +24,9 @@ application.register("album-modal", AlbumModalController)
 
 import AlbumPhotoPickerController from "controllers/album_photo_picker_controller"
 application.register("album-photo-picker", AlbumPhotoPickerController)
+
+import TagInputController from "controllers/tag_input_controller"
+application.register("tag-input", TagInputController)
+
+import DropdownController from "controllers/dropdown_controller"
+application.register("dropdown", DropdownController)

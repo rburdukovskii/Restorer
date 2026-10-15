@@ -13,3 +13,5 @@ pin "controllers/filter_picker_controller", to: "controllers/filter_picker_contr
 pin "controllers/bulk_select_controller", to: "controllers/bulk_select_controller.js"
 pin "controllers/album_modal_controller", to: "controllers/album_modal_controller.js"
 pin "controllers/album_photo_picker_controller", to: "controllers/album_photo_picker_controller.js"
+pin "controllers/tag_input_controller", to: "controllers/tag_input_controller.js"
+pin "controllers/dropdown_controller", to: "controllers/dropdown_controller.js"

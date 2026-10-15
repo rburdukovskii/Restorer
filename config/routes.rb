@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       get :download
       get   :add_to_album
       post  :assign_to_album
+      post   :add_tag
+      delete :remove_tag
     end
 
     collection do
@@ -30,7 +32,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :tags, only: [:index, :create, :destroy]
+  resources :tags, only: [:index, :create, :destroy] do
+    member do
+      get :photos
+    end
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

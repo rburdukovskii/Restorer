@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_upload, only: [:show, :status, :destroy, :toggle_favorite, :download]
+  before_action :set_upload, only: [:show, :status, :destroy, :toggle_favorite, :download, :add_tag, :remove_tag]
 
   def new
     @upload = current_user.uploads.build
@@ -113,10 +113,45 @@ class UploadsController < ApplicationController
       message: "Добавлено фото: #{count}",
       album_id: album.id,
       album_name: album.name
-  }
-  rescue ActiveRecord::RecordInvalid => e
+    }
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def add_tag
+    tag_name = params[:tag_name].to_s.strip.downcase
+
+    if tag_name.blank?
+      return render json: { error: "Имя тега не может быть пустым" }, status: :unprocessable_entity
+    end
+
+    tag = current_user.tags.find_or_create_by(name: tag_name)
+
+    unless @upload.tags.include?(tag)
+      @upload.tags << tag
+    end
+
+    render json: {
+      success: true,
+      tag: { id: tag.id, name: tag.name },
+      message: "Тег добавлен"
+    }
+  rescue => e
     render json: { error: e.message }, status: :unprocessable_entity
-end
+  end
+
+  def remove_tag
+    tag_name = params[:tag_name].to_s.strip.downcase
+    tag = current_user.tags.find_by(name: tag_name)
+
+    if tag
+      @upload.tags.delete(tag)
+
+      tag.destroy if tag.uploads.empty?
+    end
+
+    render json: { success: true, message: "Тег удалён" }
+  end
 
   private
 
