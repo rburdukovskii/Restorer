@@ -66,17 +66,30 @@ export default class extends Controller {
   addTagToDOM(tag) {
     const chip = document.createElement("span")
     chip.dataset.tagId = tag.id
-    chip.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm"
-    chip.innerHTML = `
-      ${tag.name}
-      <button type="button"
-              data-action="click->tag-input#remove"
-              data-tag-id="${tag.id}"
-              data-tag-name="${tag.name}"
-              class="text-blue-500 hover:text-red-500 transition">
-        &times;
-      </button>
-    `
+    chip.className = "inline-flex items-center gap-2 pl-3 pr-1 py-1 rounded-full " +
+                    "bg-white text-gray-900 text-sm font-medium " +
+                    "border border-gray-200 hover:border-blue-300 transition"
+
+    const nameLink = document.createElement("a")
+    nameLink.href = `/tags/${tag.id}/photos`
+    nameLink.className = "hover:text-blue-600 transition"
+    nameLink.textContent = tag.name
+    chip.appendChild(nameLink)
+
+    const button = document.createElement("button")
+    button.type = "button"
+    button.setAttribute("data-action", "click->tag-input#remove")
+    button.setAttribute("data-tag-id", tag.id)
+    button.setAttribute("data-tag-name", tag.name)
+    button.title = "Удалить тег"
+    button.className = "w-5 h-5 rounded-full flex items-center justify-center " +
+                      "text-gray-400 hover:text-white hover:bg-red-500 " +
+                      "transition cursor-pointer"
+    button.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+    </svg>`
+    chip.appendChild(button)
+
     this.tagsTarget.appendChild(chip)
   }
 }

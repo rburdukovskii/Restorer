@@ -11,6 +11,31 @@
     </div>
   <% end %>
 
+  <%# Название фото %>
+  <div class="mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-gray-900">Название</h3>
+      <% if @upload.title.present? %>
+        <span class="text-xs text-emerald-600">● сохранено</span>
+      <% end %>
+    </div>
+
+    <%= form_with model: @upload, url: upload_path(@upload), method: :patch, class: "flex gap-2" do |f| %>
+      <%= f.text_field :title,
+          value: @upload.title,
+          placeholder: "Например, «Закат на Байкале»",
+          class: "flex-1 px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm" %>
+
+      <%= f.submit "Сохранить",
+          class: "px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer" %>
+    <% end %>
+
+    <p class="mt-2 text-xs text-gray-400">
+      Дайте название фото, чтобы было легче её найти
+    </p>
+  </div>
+
   <%# Теги %>
   <div data-controller="tag-input"
       data-tag-input-add-url-value="<%= add_tag_upload_path(@upload) %>"

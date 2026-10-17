@@ -42,7 +42,6 @@ export default class extends Controller {
   }
 
   toggleNewAlbum(event) {
-    // Если выбран "новый альбом" — показать input
     const isNew = event.currentTarget.value === "new"
     if (this.hasNewAlbumWrapperTarget) {
       this.newAlbumWrapperTarget.classList.toggle("hidden", !isNew)
@@ -80,7 +79,7 @@ export default class extends Controller {
 
     if (data.success) {
       this.close()
-      // Сбросить выбор в bulk-select
+      
       const bulkController = this.application.getControllerForElementAndIdentifier(
         document.querySelector('[data-controller~="bulk-select"]'),
         "bulk-select"
@@ -90,8 +89,10 @@ export default class extends Controller {
       // Флеш
     this.showFlash(data.message)
 
-    setTimeout(() => { window.location.reload() }, 800) } 
-    else { alert(data.error || "Ошибка") }
+    setTimeout(() => { window.location.reload() }, 800) 
+    } else { 
+        alert(data.error || "Ошибка") 
+      }
     }
 
   showFlash(message) {

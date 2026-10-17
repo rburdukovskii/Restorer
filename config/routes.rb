@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   get "gallery", to: "gallery#index", as: :gallery
 
-  resources :uploads, only: [:new, :create, :show, :destroy] do
+  resources :uploads, only: [:new, :create, :show, :update, :destroy] do
     member do
       get :status
       patch :toggle_favorite

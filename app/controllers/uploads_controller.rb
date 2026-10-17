@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_upload, only: [:show, :status, :destroy, :toggle_favorite, :download, :add_tag, :remove_tag]
+  before_action :set_upload, only: [:show, :status, :destroy, :toggle_favorite, :download, :add_tag, :remove_tag, :update]
 
   def new
     @upload = current_user.uploads.build
@@ -27,6 +27,14 @@ class UploadsController < ApplicationController
   end
 
   def show
+  end
+
+  def update
+    if @upload.update(upload_update_params)
+      redirect_to @upload, notice: "Название обновлено"
+    else
+      redirect_to @upload, alert: "Не удалось обновить название"
+    end
   end
 
   def status
@@ -161,5 +169,9 @@ class UploadsController < ApplicationController
 
   def upload_params
     params.require(:upload).permit(:original)
+  end
+
+  def upload_update_params
+    params.require(:upload).permit(:title)
   end
 end
