@@ -18,7 +18,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 gem "devise", "~> 4.9"
-gem "json", "~> 2.6.3"
+gem "json", "~> 3.1.0"
 gem 'tailwindcss-rails'
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
