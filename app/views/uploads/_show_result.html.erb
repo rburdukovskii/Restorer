@@ -1,0 +1,9 @@
+<div id="upload_show_progress_<%= upload.id %>">
+  <% if upload.processed.attached? %>
+    <%= render "components/before_after", before_url: url_for(upload.original), after_url: url_for(upload.processed) %>
+  <% else %>
+    <div class="p-8 rounded-2xl bg-white shadow-lg">
+      <%= render "components/progress", status_url: status_upload_path(upload) %>
+    </div>
+  <% end %>
+</div>

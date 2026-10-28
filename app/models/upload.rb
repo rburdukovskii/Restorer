@@ -46,6 +46,16 @@ class Upload < ApplicationRecord
     tags.delete(tag_to_remove) if tag_to_remove
   end
 
+  # Стрим для всей галереи
+  def live_stream
+    [user, :uploads]
+  end
+
+  # Стрим для избранного
+  def favorites_stream
+    [user, :favorites]
+  end
+
   private
 
   def original_format_and_size

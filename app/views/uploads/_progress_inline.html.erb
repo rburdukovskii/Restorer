@@ -1,0 +1,12 @@
+<div id="upload_progress_<%= upload.id %>">
+  <% if upload.status == "pending" || upload.status == "processing" %>
+    <div class="absolute inset-0 z-20 flex items-end justify-center pb-14 pointer-events-none">
+      <div class="w-3/4">
+        <div class="h-1.5 bg-white/60 rounded-full overflow-hidden shadow-sm">
+          <div class="h-full bg-blue-600 transition-all duration-300" style="width: <%= upload.progress || 0 %>%"></div>
+        </div>
+        <div class="text-center text-xs text-gray-700 mt-1 font-semibold"><%= upload.progress || 0 %>%</div>
+      </div>
+    </div>
+  <% end %>
+</div>

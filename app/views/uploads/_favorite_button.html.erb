@@ -1,7 +1,8 @@
-<%= button_to toggle_favorite_upload_path(upload),
-    method: :patch,
-    class: "w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-lg transition
-           #{upload.favorite ? 'text-yellow-500' : 'text-gray-400'}",
-    form_class: "inline-block" do %>
-  <%= upload.favorite ? "★" : "☆" %>
+<%= turbo_frame_tag "favorite_frame_#{upload.id}" do %>
+  <%= button_to toggle_favorite_upload_path(upload, from_favorites: params[:favorites].present?),
+      method: :patch,
+      class: "w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-lg transition cursor-pointer #{upload.favorite ? 'text-yellow-500' : 'text-gray-400'}",
+      form_class: "m-0 p-0 inline-block" do %>
+    <%= upload.favorite ? "★" : "☆" %>
+  <% end %>
 <% end %>
