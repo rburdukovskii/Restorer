@@ -36,30 +36,94 @@ export default class extends Controller {
     }
   }
 
+  addExisting(event) {
+    event.preventDefault()
+    
+    const tagName = event.currentTarget.dataset.tagName
+    const tagId = event.currentTarget.dataset.tagId
+    
+    // Отправляем запрос на сервер
+    fetch(this.addUrlValue, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ tag_name: tagName })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Создаем HTML для нового тега в списке активных
+        const tagHtml = `
+          <span data-tag-id="${data.tag.id}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+            #${data.tag.name}
+            <button type="button"
+                    data-action="click->tag-input#remove"
+                    data-tag-id="${data.tag.id}"
+                    data-tag-name="${data.tag.name}"
+                    class="text-blue-500 hover:text-red-500 transition ml-1">
+              &times;
+            </button>
+          </span>
+        `
+        // Добавляем в контейнер
+        this.tagsTarget.insertAdjacentHTML("beforeend", tagHtml)
+        
+        // Удаляем кнопку из списка существующих
+        event.currentTarget.remove()
+      } else {
+        alert(data.error || "Ошибка добавления тега")
+      }
+    })
+  }
+
   async remove(event) {
     event.preventDefault()
 
     const tagId = event.currentTarget.dataset.tagId
     const tagName = event.currentTarget.dataset.tagName
+    
+    // Ищем родительский SPAN (плашку), а не саму кнопку
+    const tagElement = event.currentTarget.closest(`span[data-tag-id="${tagId}"]`)
 
-    if (!confirm(`Удалить тег «${tagName}»?`)) return
+    if (!tagElement) {
+      console.error("Не найден элемент плашки")
+      return
+    }
+
+    // Делаем плашку полупрозрачной
+    tagElement.style.opacity = '0.5'
+    tagElement.style.pointerEvents = 'none'
 
     const formData = new FormData()
     formData.append("tag_name", tagName)
 
-    const response = await fetch(this.removeUrlValue, {
-      method: "DELETE",
-      body: formData,
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
-        "Accept": "application/json"
+    try {
+      const response = await fetch(this.removeUrlValue, {
+        method: "DELETE",
+        body: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "Accept": "application/json"
+        }
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Удаляем всю плашку
+        tagElement.remove()
+      } else {
+        // Восстанавливаем, если ошибка
+        tagElement.style.opacity = '1'
+        tagElement.style.pointerEvents = 'auto'
       }
-    })
-
-    const data = await response.json()
-
-    if (data.success) {
-      event.currentTarget.closest("[data-tag-id]")?.remove()
+    } catch (error) {
+      tagElement.style.opacity = '1'
+      tagElement.style.pointerEvents = 'auto'
+      console.error("Ошибка удаления тега:", error)
     }
   }
 

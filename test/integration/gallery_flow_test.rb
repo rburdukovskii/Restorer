@@ -13,7 +13,7 @@ class GalleryFlowTest < ActionDispatch::IntegrationTest
     get gallery_path
 
     assert_response :success
-    assert_select ".grid img", count: 3
+    assert_select "[id^='upload_card_']", count: 3
   end
 
   test "filter by favorites" do

@@ -75,4 +75,3 @@ group :test do
   gem "rails-i18n"
 end
 
-gem "cssbundling-rails", "~> 1.4"

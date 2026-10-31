@@ -25,6 +25,7 @@ class UploadsController < ApplicationController
   end
 
   def show
+    @available_tags = current_user.tags.where.not(id: @upload.tags.pluck(:id)).order(:name)
   end
 
   def update
