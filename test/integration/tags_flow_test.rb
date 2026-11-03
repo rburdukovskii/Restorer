@@ -34,7 +34,6 @@ class TagsFlowTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     
-    # Проверяем, что блок с существующими тегами отрендерился
     assert_select "p", text: "Ваши существующие теги:"
     
     # Проверяем, что кнопка для тега "сепия" есть и имеет нужные data-атрибуты для JS

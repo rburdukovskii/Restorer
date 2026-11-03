@@ -112,8 +112,21 @@ class UploadsController < ApplicationController
 
   def download
     attachment = @upload.processed.attached? ? @upload.processed : @upload.original
+    
+    # 1. Берем название фото
+    title_part = @upload.title.presence || "photo_#{@upload.id}"
+    
+    # 2. Берем имя фильтра
+    filter_part = @upload.filter_name.presence || Filter.default
+    
+    # 3. Транслитерируем и очищаем название
+    safe_title = transliterate(title_part)
+    
+    # 4. Собираем итоговое имя
+    filename = "#{safe_title}_#{filter_part}.jpg"
+
     send_data attachment.download,
-              filename: "processed_#{@upload.id}.jpg",
+              filename: filename,
               type: attachment.content_type
   end
 
@@ -193,5 +206,20 @@ class UploadsController < ApplicationController
 
   def upload_update_params
     params.require(:upload).permit(:title)
+  end
+
+  def transliterate(str)
+    ru = {
+      'а'=>'a', 'б'=>'b', 'в'=>'v', 'г'=>'g', 'д'=>'d', 'е'=>'e', 'ё'=>'e', 'ж'=>'zh',
+      'з'=>'z', 'и'=>'i', 'й'=>'y', 'к'=>'k', 'л'=>'l', 'м'=>'m', 'н'=>'n', 'о'=>'o',
+      'п'=>'p', 'р'=>'r', 'с'=>'s', 'т'=>'t', 'у'=>'u', 'ф'=>'f', 'х'=>'h', 'ц'=>'ts',
+      'ч'=>'ch', 'ш'=>'sh', 'щ'=>'sch', 'ъ'=>'', 'ы'=>'y', 'ь'=>'', 'э'=>'e', 'ю'=>'yu', 'я'=>'ya'
+    }
+    
+    # Переводим в нижний регистр, заменяем русские буквы на английские
+    transliterated = str.to_s.downcase.chars.map { |char| ru[char] || char }.join
+    
+    # Убираем все, кроме латиницы, цифр и пробелов, и заменяем пробелы на подчеркивания
+    transliterated.gsub(/[^a-z0-9\s]/i, '').strip.gsub(/\s+/, '_')
   end
 end

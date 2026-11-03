@@ -11,28 +11,56 @@ export default class extends Controller {
   async add(event) {
     event.preventDefault()
 
-    const name = this.inputTarget.value.trim()
-    if (!name) return
+    const tagName = this.inputTarget.value.trim().toLowerCase()
+    if (!tagName) return
+
+    // Опционально: очищаем поле сразу
+    this.inputTarget.value = ""
 
     const formData = new FormData()
-    formData.append("tag_name", name)
+    formData.append("tag_name", tagName)
 
-    const response = await fetch(this.addUrlValue, {
-      method: "POST",
-      body: formData,
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
-        "Accept": "application/json"
+    try {
+      const response = await fetch(this.addUrlValue, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "Accept": "application/json"
+        }
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Проверяем, нет ли уже такого тега в DOM (чтобы не дублировать)
+        const existingTag = this.tagsTarget.querySelector(`[data-tag-id="${data.tag.id}"]`)
+        if (existingTag) return
+
+        const tagHtml = `
+          <span data-tag-id="${data.tag.id}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+            #${data.tag.name}
+            <button type="button"
+                    data-action="click->tag-input#remove"
+                    data-tag-id="${data.tag.id}"
+                    data-tag-name="${data.tag.name}"
+                    class="text-blue-500 hover:text-red-500 transition ml-1">
+              &times;
+            </button>
+          </span>
+        `
+        // Добавляем в контейнер
+        this.tagsTarget.insertAdjacentHTML("beforeend", tagHtml)
+
+        // Если этот тег был в списке "Существующие", удаляем его оттуда
+        const existingButton = document.querySelector(`button[data-action='click->tag-input#addExisting'][data-tag-id="${data.tag.id}"]`)
+        if (existingButton) existingButton.remove()
+
+      } else {
+        alert(data.error || "Ошибка добавления тега")
       }
-    })
-
-    const data = await response.json()
-
-    if (data.success) {
-      this.addTagToDOM(data.tag)
-      this.inputTarget.value = ""
-    } else {
-      alert(data.error || "Ошибка")
+    } catch (error) {
+      console.error("Ошибка сети", error)
     }
   }
 
@@ -85,7 +113,6 @@ export default class extends Controller {
     const tagId = event.currentTarget.dataset.tagId
     const tagName = event.currentTarget.dataset.tagName
     
-    // Ищем родительский SPAN (плашку), а не саму кнопку
     const tagElement = event.currentTarget.closest(`span[data-tag-id="${tagId}"]`)
 
     if (!tagElement) {

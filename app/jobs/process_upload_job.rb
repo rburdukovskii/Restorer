@@ -35,10 +35,16 @@ class ProcessUploadJob < ApplicationJob
         partial: "uploads/card",
         locals: { photo: upload }
 
-      # Обновляем страницу show (если она открыта)
+      # Обновляем страницу show (слайдер До/После)
       upload.broadcast_replace_to upload.live_stream,
         target: "upload_show_progress_#{upload.id}",
         partial: "uploads/show_result",
+        locals: { upload: upload }
+
+      # Обновляем кнопку скачивания (она появится автоматически)
+      upload.broadcast_replace_to upload.live_stream,
+        target: "upload_download_#{upload.id}",
+        partial: "uploads/download_button",
         locals: { upload: upload }
         
     rescue ImageProcessor::Error => e

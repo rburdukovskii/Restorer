@@ -1,4 +1,3 @@
-# app/models/filter.rb
 class Filter
   ALL = {
     "original" => {
@@ -20,7 +19,7 @@ class Filter
       description: "Винтажный тёплый оттенок",
       icon: "📜",
       operations: [
-        { type: :sepia, value: 80 }
+        { type: :sepia, value: 100 }
       ]
     },
     "retro" => {
@@ -28,17 +27,17 @@ class Filter
       description: "Приглушённые цвета 70-х",
       icon: "📻",
       operations: [
-    { type: :modulate, value: { saturation: 60, brightness: 105 } },
-    { type: :sepia,    value: 30 },
-    { type: :fade,     value: 20 }
-  ]
+        { type: :modulate, value: { saturation: 60, brightness: 105 } },
+        { type: :sepia,    value: 30 },
+        { type: :fade,     value: 20 }
+      ]
     },
     "sharpen" => {
       name: "Резкость",
       description: "Повышенная детализация",
       icon: "🔍",
       operations: [
-        { type: :sharpen, value: "0x2" }
+        { type: :sharpen, value: "0x1.5" }
       ]
     },
     "warm" => {
@@ -46,7 +45,7 @@ class Filter
       description: "Тёплые тона и мягкий контраст",
       icon: "🌅",
       operations: [
-        { type: :modulate, value: { saturation: 115, brightness: 105 } },
+        { type: :modulate, value: { saturation: 115, brightness: 105, hue: 108 } },
         { type: :colorize, value: { color: "#FF6B35", amount: 15 } }
       ]
     },
@@ -55,7 +54,7 @@ class Filter
       description: "Холодные тона, синеватый оттенок",
       icon: "❄️",
       operations: [
-        { type: :modulate, value: { saturation: 90 } },
+        { type: :modulate, value: { saturation: 90, hue: 180 } },
         { type: :colorize, value: { color: "#3B82F6", amount: 15 } }
       ]
     },

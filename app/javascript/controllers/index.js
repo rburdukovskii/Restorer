@@ -30,3 +30,6 @@ application.register("tag-input", TagInputController)
 
 import DropdownController from "controllers/dropdown_controller"
 application.register("dropdown", DropdownController)
+
+import FlashController from "controllers/flash_controller"
+application.register("flash", FlashController)

@@ -30,7 +30,7 @@
     </p>
   </div>
 
-    <%# Теги %>
+  <%# Теги %>
   <div data-controller="tag-input"
       data-tag-input-add-url-value="<%= add_tag_upload_path(@upload) %>"
       data-tag-input-remove-url-value="<%= remove_tag_upload_path(@upload) %>"
@@ -55,7 +55,7 @@
     </div>
 
     <%# Поле добавления нового тега %>
-    <form data-action="submit->tag-input#add" class="flex gap-2 mb-4">
+    <form data-action="submit->tag-input#add" class="flex gap-2 mb-2">
       <input type="text"
             data-tag-input-target="input"
             placeholder="Добавить новый тег..."
@@ -67,6 +67,11 @@
         Добавить
       </button>
     </form>
+
+    <%# Подсказка перенесена сюда %>
+    <p class="text-xs text-gray-400">
+      Например: «природа», «отпуск 2026», «семья»
+    </p>
 
     <%# Существующие теги (кнопки для быстрого добавления) %>
     <% if @available_tags.any? %>
@@ -85,18 +90,8 @@
         </div>
       </div>
     <% end %>
-
-    <p class="mt-4 text-xs text-gray-400">
-      Например: «природа», «отпуск 2026», «семья»
-    </p>
   </div>
 
-  <% if @upload.processed.attached? %>
-    <div class="mt-8 text-center">
-      <%= link_to "Скачать результат",
-          rails_blob_path(@upload.processed, disposition: "attachment"),
-          class: "inline-block text-white font-semibold py-3 px-6 rounded-xl transition hover:opacity-90",
-          style: "background: linear-gradient(135deg, #4F46E5, #EC4899);" %>
-    </div>
-  <% end %>
+  <%# Кнопка скачивания %>
+  <%= render "uploads/download_button", upload: @upload %>
 </section>

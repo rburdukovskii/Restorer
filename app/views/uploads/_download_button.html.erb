@@ -1,0 +1,8 @@
+<div id="upload_download_<%= upload.id %>" class="mt-8 text-center">
+  <% if upload.processed.attached? %>
+    <%= link_to "Скачать результат",
+        download_upload_path(upload),
+        class: "inline-block text-white font-semibold py-3 px-6 rounded-xl transition hover:opacity-90",
+        style: "background: linear-gradient(135deg, #4F46E5, #EC4899);" %>
+  <% end %>
+</div>

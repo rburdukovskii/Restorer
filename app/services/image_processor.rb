@@ -42,37 +42,55 @@ class ImageProcessor
 
   def apply_operation(image, op)
     case op[:type]
-      when :fade
+    when :fade
       amount = op[:value] || 20
-      
       image.combine_options do |c|
         c.level("#{amount}%,100%")
       end
-      when :colorspace
-        image.colorspace(op[:value])
-      when :sepia
-        image.sepia_tone("#{op[:value]}%")
-      when :modulate
-        args = op[:value].values.map(&:to_s)
-        image.modulate(args.join(","))
-      when :sharpen
-        image.sharpen(op[:value])
-      when :contrast
-        image.contrast
-      when :colorize
-        amount = op[:value][:amount] || 20
-        color  = op[:value][:color]
-        rgb = color.delete("#").scan(/../).map { |c| c.to_i(16) }
-        rgb_color = "rgb(#{rgb.join(",")})"
 
-        image.combine_options do |c|
-          c.fill(rgb_color)
-          c.colorize("#{amount}%")
-        end
-      when :resize
-        image.resize(op[:value])
-      else
-        Rails.logger.warn("Unknown operation: #{op[:type]}")
+    when :colorspace
+      image.colorspace(op[:value])
+
+    when :sepia
+      # В CSS sepia(1) = 100% сепии
+      image.sepia_tone("#{op[:value]}%")
+
+    when :modulate
+      # В MiniMagick modulate принимает "brightness,saturation,hue"
+      # Если переданы только saturation и brightness, подставляем hue=100 (без изменений)
+      val = op[:value]
+      brightness = val[:brightness] || 100
+      saturation = val[:saturation] || 100
+      hue = val[:hue] || 100
+      
+      image.modulate("#{brightness},#{saturation},#{hue}")
+
+    when :sharpen
+      image.sharpen(op[:value])
+
+    when :contrast
+      # В CSS contrast(1.15) примерно равен повышению контраста на 15%
+      # MiniMagick -sigmoidal-contrast
+      image.combine_options do |c|
+        c.sigmoidal_contrast("3x#{op[:value]}%")
+      end
+
+    when :colorize
+      amount = op[:value][:amount] || 20
+      color  = op[:value][:color]
+      rgb = color.delete("#").scan(/../).map { |c| c.to_i(16) }
+      rgb_color = "rgb(#{rgb.join(",")})"
+
+      image.combine_options do |c|
+        c.fill(rgb_color)
+        c.colorize("#{amount}%")
+      end
+
+    when :resize
+      image.resize(op[:value])
+
+    else
+      Rails.logger.warn("Unknown operation: #{op[:type]}")
     end
   end
 end

@@ -9,24 +9,28 @@
       </div>
     <% end %>
 
-    <%= render "components/file_upload", form: f, field: :original %>
+    <%# Оборачиваем всё в контроллеры, чтобы filter-picker мог менять стили картинки image-preview %>
+    <div data-controller="image-preview filter-picker">
+      
+      <%= render "components/file_upload", form: f, field: :original %>
 
-    <div class="mt-8" data-controller="filter-picker">
-      <h2 class="text-lg font-semibold text-gray-900 mb-3">Выберите фильтр</h2>
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900 mb-3">Выберите фильтр</h2>
 
-      <%= hidden_field_tag "upload[filter_name]", Filter.default, data: { "filter-picker-target": "input" } %>
+        <%= hidden_field_tag "upload[filter_name]", Filter.default, data: { "filter-picker-target": "input" } %>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <% Filter.all.each do |slug, filter| %>
-          <button type="button"
-                  data-filter-picker-target="option"
-                  data-action="click->filter-picker#select"
-                  data-slug="<%= slug %>"
-                  class="p-3 rounded-xl border-2 text-center transition <%= slug == Filter.default ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/30' %>">
-            <div class="text-2xl mb-1"><%= filter[:icon] %></div>
-            <div class="text-sm font-medium text-gray-900"><%= filter[:name] %></div>
-          </button>
-        <% end %>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <% Filter.all.each do |slug, filter| %>
+            <button type="button"
+                    data-filter-picker-target="option"
+                    data-action="click->filter-picker#select"
+                    data-slug="<%= slug %>"
+                    class="p-3 rounded-xl border-2 text-center transition <%= slug == Filter.default ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/30' %>">
+              <div class="text-2xl mb-1"><%= filter[:icon] %></div>
+              <div class="text-sm font-medium text-gray-900"><%= filter[:name] %></div>
+            </button>
+          <% end %>
+        </div>
       </div>
     </div>
 
