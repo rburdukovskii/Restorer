@@ -10,6 +10,8 @@ class Upload < ApplicationRecord
   has_many :photo_tags, dependent: :destroy
   has_many :tags, through: :photo_tags
 
+  has_many :share_links, as: :shareable, dependent: :destroy
+
   validates :original, presence: true
   validate :original_format_and_size
 

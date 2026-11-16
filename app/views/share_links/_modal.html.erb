@@ -1,0 +1,35 @@
+<div id="share_link_modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+     data-controller="modal" data-action="click->modal#closeOnBackdrop">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6" data-modal-target="panel">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-900">Публичная ссылка</h2>
+      <button type="button" data-action="click->modal#close"
+              class="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer">&times;</button>
+    </div>
+
+    <p class="text-sm text-gray-500 mb-4">
+      Любой, у кого есть ссылка, сможет открыть её без авторизации.
+      Действует до <strong><%= @share_link.expires_at.strftime("%d.%m.%Y %H:%M") %></strong>.
+    </p>
+
+    <div class="flex gap-2 mb-6" data-controller="clipboard">
+      <input type="text" readonly value="<%= public_share_url(@share_link.token) %>"
+             data-clipboard-target="source"
+             class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 font-mono">
+      <button type="button" data-action="click->clipboard#copy"
+              class="px-4 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer">
+        Копировать
+      </button>
+    </div>
+
+    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+      <span class="text-xs text-gray-400">Просмотров: <%= @share_link.views_count %></span>
+      
+      <%= button_to "Создать новую ссылку",
+          regenerate_share_link_path(@share_link),
+          method: :post,
+          form: { data: { turbo_stream: true, turbo_confirm: "Старая ссылка перестанет работать. Продолжить?" } },
+          class: "text-sm font-semibold text-red-600 hover:text-red-700 cursor-pointer" %>
+    </div>
+  </div>
+</div>

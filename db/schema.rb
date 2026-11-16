@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_115044) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -67,6 +67,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_115044) do
     t.index ["upload_id"], name: "index_photo_tags_on_upload_id"
   end
 
+  create_table "share_links", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.bigint "shareable_id", null: false
+    t.string "shareable_type", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "views_count", default: 0, null: false
+    t.index ["expires_at"], name: "index_share_links_on_expires_at"
+    t.index ["shareable_type", "shareable_id"], name: "index_share_links_on_shareable_type_and_shareable_id"
+    t.index ["token"], name: "index_share_links_on_token", unique: true
+    t.index ["user_id", "shareable_type", "shareable_id"], name: "index_share_links_on_user_and_shareable"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -115,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_115044) do
   add_foreign_key "photo_albums", "uploads"
   add_foreign_key "photo_tags", "tags"
   add_foreign_key "photo_tags", "uploads"
+  add_foreign_key "share_links", "users"
   add_foreign_key "tags", "users"
   add_foreign_key "uploads", "users"
 end

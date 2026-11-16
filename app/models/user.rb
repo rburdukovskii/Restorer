@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :uploads, dependent: :destroy
   has_many :albums,  dependent: :destroy
   has_many :tags,    dependent: :destroy
+  has_many :share_links, dependent: :destroy
 
   has_one_attached :avatar
 

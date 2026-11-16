@@ -1,0 +1,44 @@
+<div class="max-w-3xl mx-auto px-6 py-12">
+  <!-- Кнопка Назад, если мы пришли из альбома -->
+  <% if @share_link.shareable.is_a?(Album) && params[:photo].present? %>
+    <%= link_to "← Назад к альбому «#{@share_link.shareable.name}»",
+        public_share_path(@share_link.token),
+        class: "inline-block mb-6 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg transition" %>
+  <% end %>
+
+  <div class="mb-6 text-center">
+    <p class="text-sm text-gray-500">
+      Публичная ссылка · просмотров: <span class="font-semibold text-gray-900"><%= @share_link.views_count %></span>
+    </p>
+    <p class="text-xs text-gray-400 mt-1">
+      Действует до <%= @share_link.expires_at.strftime("%d.%m.%Y %H:%M") %>
+    </p>
+  </div>
+
+  <div class="rounded-2xl overflow-hidden bg-white shadow-lg">
+    <% if @shareable.processed.attached? %>
+      <%= image_tag @shareable.processed, class: "w-full h-auto", alt: @shareable.display_title %>
+    <% elsif @shareable.original.attached? %>
+      <%= image_tag @shareable.original, class: "w-full h-auto", alt: @shareable.display_title %>
+    <% end %>
+  </div>
+
+  <% if @shareable.display_title.present? %>
+    <h1 class="mt-6 text-2xl font-bold text-gray-900 text-center"><%= @shareable.display_title %></h1>
+  <% end %>
+
+  <% if @shareable.tags.any? %>
+    <div class="mt-3 flex flex-wrap justify-center gap-2">
+      <% @shareable.tags.each do |tag| %>
+        <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">#<%= tag.name %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mt-8 text-center">
+    <!-- Передаем photo: params[:photo], чтобы скачалось нужное фото -->
+    <%= link_to "Скачать изображение",
+        public_share_download_path(@share_link.token, photo: params[:photo]),
+        class: "inline-block px-6 py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition" %>
+  </div>
+</div>

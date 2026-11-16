@@ -53,6 +53,12 @@
       <%= link_to "Удалить", album_path(@album),
           data: { turbo_method: :delete, turbo_confirm: "Удалить альбом? Фото останутся в галерее." },
           class: "px-5 py-2 rounded-lg font-semibold text-red-600 bg-white border-2 border-red-500 hover:bg-red-50 transition" %>
+
+      <%= button_to "Поделиться",
+      share_links_path(shareable_type: "Album", shareable_id: @album.id),
+      method: :post,
+      form: { data: { turbo_stream: true } },
+      class: "px-5 py-2 rounded-lg font-semibold text-emerald-600 bg-white border-2 border-emerald-500 hover:bg-emerald-50 transition cursor-pointer" %>
     </div>
   </div>
 
@@ -61,18 +67,34 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <% @album.uploads.each do |photo| %>
         <div class="group relative rounded-xl overflow-hidden bg-gray-100">
-          <%= link_to upload_path(photo) do %>
-            <%= image_tag (photo.processed.attached? ? photo.processed : photo.original),
-                class: "w-full aspect-square object-cover group-hover:scale-105 transition" %>
+          
+          <%= link_to upload_path(photo), class: "block" do %>
+            <% if photo.processed.attached? %>
+              <%= image_tag photo.processed, class: "w-full aspect-square object-cover group-hover:scale-105 transition", alt: photo.display_title %>
+            <% elsif photo.original.attached? %>
+              <%= image_tag photo.original, class: "w-full aspect-square object-cover group-hover:scale-105 transition", alt: photo.display_title %>
+            <% end %>
+
+            <%# Информация на фото (Название и теги) %>
+            <div class="absolute bottom-0 left-0 right-0 px-3 py-2 bg-black/40 backdrop-blur-sm z-10 pointer-events-none">
+              <div class="text-white text-sm font-semibold truncate">
+                <%= photo.display_title %>
+              </div>
+              <% if photo.tags.any? %>
+                <div class="text-white/80 text-xs truncate mt-0.5">
+                  <%= photo.tags.map { |t| "##{t.name}" }.join(" ") %>
+                </div>
+              <% end %>
+            </div>
           <% end %>
 
-          <%# Убрать из альбома %>
-          <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
+          <%# Кнопка "Убрать из альбома" (z-20 чтобы быть выше подписи) %>
+          <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition z-20">
             <%= button_to remove_upload_album_path(@album, upload_id: photo.id),
                 method: :delete,
                 data: { turbo_confirm: "Убрать фото из альбома?" },
                 class: "w-8 h-8 rounded-full bg-white/90 hover:bg-red-500 hover:text-white
-                       flex items-center justify-center text-gray-600 transition" do %>
+                       flex items-center justify-center text-gray-600 transition shadow-md" do %>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M6 18L18 6M6 6l12 12"/>

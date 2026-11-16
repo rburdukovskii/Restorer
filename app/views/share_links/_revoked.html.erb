@@ -1,0 +1,11 @@
+<div id="share_link_modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center">
+    <div class="text-5xl mb-3">🔒</div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Ссылка отозвана</h2>
+    <p class="text-sm text-gray-500 mb-4">Теперь она недоступна для просмотра.</p>
+    <button type="button" onclick="this.closest('#share_link_modal').remove()"
+            class="px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition cursor-pointer">
+      Закрыть
+    </button>
+  </div>
+</div>

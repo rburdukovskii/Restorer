@@ -94,4 +94,12 @@
 
   <%# Кнопка скачивания %>
   <%= render "uploads/download_button", upload: @upload %>
+
+  <%# Публичная ссылка %>
+  <div id="upload_share_link_<%= @upload.id %>" class="mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">Публичная ссылка</h3>
+    <%= render "uploads/share_link",
+        upload: @upload,
+        share_link: @upload.share_links.active.order(created_at: :desc).first %>
+  </div>
 </section>

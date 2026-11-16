@@ -1,0 +1,4 @@
+production:
+  share_link_cleanup:
+    class: ShareLinkCleanupJob
+    schedule: "every day at 3am"

@@ -7,6 +7,12 @@ Rails.application.routes.draw do
 
   get "gallery", to: "gallery#index", as: :gallery
 
+  resources :share_links, only: [:create, :destroy] do
+    member do
+      post :regenerate # или patch
+    end
+  end
+
   resources :uploads, only: [:new, :create, :show, :update, :destroy] do
     member do
       get :status
@@ -37,6 +43,9 @@ Rails.application.routes.draw do
       get :photos
     end
   end
+
+  get "s/:token", to: "public_shares#show", as: :public_share
+  get "s/:token/download", to: "public_shares#download", as: :public_share_download
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

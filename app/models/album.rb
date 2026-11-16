@@ -1,7 +1,11 @@
 class Album < ApplicationRecord
   belongs_to :user
   has_many :photo_albums, dependent: :destroy
-  has_many :uploads, through: :photo_albums
+  
+  # Добавляем order, чтобы новые фото были первыми
+  has_many :uploads, -> { order(created_at: :desc) }, through: :photo_albums
+  
+  has_many :share_links, as: :shareable, dependent: :destroy
   has_one_attached :cover
 
   validates :name, presence: true, length: { maximum: 100 }
@@ -11,9 +15,13 @@ class Album < ApplicationRecord
   def cover_image
     return cover if cover.attached?
 
-    first_upload = uploads.first
+    first_photo_album = photo_albums.order(created_at: :asc).first
+    return nil unless first_photo_album
+
+    first_upload = first_photo_album.upload
     return nil unless first_upload
 
+    # Возвращаем обработанное фото, если есть, иначе оригинал
     if first_upload.processed.attached?
       first_upload.processed
     else

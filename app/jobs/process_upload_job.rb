@@ -3,11 +3,9 @@ class ProcessUploadJob < ApplicationJob
 
   def perform(upload_id)
     upload = Upload.find(upload_id)
-    
-    # 1. Обновляем прогресс и шлем стрим
+
     update_progress(upload, status: "processing", progress: 20)
-    
-    # 2. Добавляем карточку в общую ленту (если её там нет)
+
     upload.broadcast_prepend_to upload.live_stream,
       target: "gallery_uploads",
       partial: "uploads/card",
@@ -28,29 +26,37 @@ class ProcessUploadJob < ApplicationJob
       )
 
       update_progress(upload, status: "completed", progress: 100)
-      
-      # После завершения заменяем карточку на готовую
+
       upload.broadcast_replace_to upload.live_stream,
         target: "upload_card_#{upload.id}",
         partial: "uploads/card",
         locals: { photo: upload }
 
-      # Обновляем страницу show (слайдер До/После)
       upload.broadcast_replace_to upload.live_stream,
         target: "upload_show_progress_#{upload.id}",
         partial: "uploads/show_result",
         locals: { upload: upload }
 
-      # Обновляем кнопку скачивания (она появится автоматически)
       upload.broadcast_replace_to upload.live_stream,
         target: "upload_download_#{upload.id}",
         partial: "uploads/download_button",
         locals: { upload: upload }
-        
+
+      # Автосоздание публичной ссылки
+      share_link = ShareLink.find_or_create_active!(
+        user: upload.user,
+        shareable: upload
+      )
+
+      upload.broadcast_replace_to upload.live_stream,
+        target: "upload_share_link_#{upload.id}",
+        partial: "uploads/share_link",
+        locals: { upload: upload, share_link: share_link }
+
     rescue ImageProcessor::Error => e
       Rails.logger.error("Filter error: #{e.message}")
       update_progress(upload, status: "failed", progress: 0)
-      
+
       upload.broadcast_replace_to upload.live_stream,
         target: "upload_card_#{upload.id}",
         partial: "uploads/card",

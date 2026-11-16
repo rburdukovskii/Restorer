@@ -33,3 +33,9 @@ application.register("dropdown", DropdownController)
 
 import FlashController from "controllers/flash_controller"
 application.register("flash", FlashController)
+
+import ClipboardController from "controllers/clipboard_controller"
+application.register("clipboard", ClipboardController)
+
+import ModalController from "controllers/modal_controller"
+application.register("modal", ModalController)

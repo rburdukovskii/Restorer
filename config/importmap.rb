@@ -17,3 +17,5 @@ pin "controllers/album_photo_picker_controller", to: "controllers/album_photo_pi
 pin "controllers/tag_input_controller", to: "controllers/tag_input_controller.js"
 pin "controllers/dropdown_controller", to: "controllers/dropdown_controller.js"
 pin "controllers/flash_controller", to: "controllers/flash_controller.js"
+pin "controllers/clipboard_controller", to: "controllers/clipboard_controller.js"
+pin "controllers/modal_controller", to: "controllers/modal_controller.js"
