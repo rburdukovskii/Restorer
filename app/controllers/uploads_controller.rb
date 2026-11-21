@@ -198,8 +198,7 @@ class UploadsController < ApplicationController
 
   def set_upload
     if action_name.in?(%w[show download])
-      # Смотреть и скачивать можно свои фото + фото из альбомов,
-      # к которым есть доступ (владелец альбома или соавтор)
+      # Смотреть и скачивать можно свои фото + фото из альбомов, к которым есть доступ
       @upload = Upload
         .left_joins(photo_albums: { album: :album_collaborators })
         .where(
@@ -209,7 +208,7 @@ class UploadsController < ApplicationController
         .distinct
         .find(params[:id])
     else
-      # Редактирование, удаление, теги, избранное — только свои фото
+      # Редактирование, удаление, теги, избранное — строго только свои фото
       @upload = current_user.uploads.find(params[:id])
     end
   end

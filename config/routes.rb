@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       post :add_upload
       delete :remove_upload
       post   :bulk_add_uploads
+      delete :bulk_remove_uploads
       post :add_collaborator
       delete :remove_collaborator
     end

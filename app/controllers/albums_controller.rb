@@ -1,7 +1,7 @@
 class AlbumsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload, :bulk_add_uploads, :add_collaborator, :remove_collaborator]
-  before_action :authorize_edit!, only: [:edit, :update, :add_upload, :remove_upload, :bulk_add_uploads]
+  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload, :bulk_add_uploads, :bulk_remove_uploads, :add_collaborator, :remove_collaborator]
+  before_action :authorize_edit!, only: [:edit, :update, :add_upload, :remove_upload, :bulk_add_uploads, :bulk_remove_uploads]
   before_action :authorize_owner!, only: [:destroy, :add_collaborator, :remove_collaborator]
 
   def new
@@ -67,6 +67,23 @@ class AlbumsController < ApplicationController
     end
 
     render json: { success: true, message: "Добавлено фото: #{count}" }
+  end
+
+  def bulk_remove_uploads
+    upload_ids = Array(params[:upload_ids]).map(&:to_i).reject(&:zero?)
+
+    if upload_ids.empty?
+      return redirect_to album_path(@album), alert: "Не выбрано ни одного фото"
+    end
+
+    uploads = @album.uploads.where(id: upload_ids)
+    count = uploads.count
+
+    # Удаляем только связи (фото остаются в галерее владельца)
+    @album.uploads.delete(uploads)
+
+    # Редирект обновит страницу, пересчитает количество фото и обновит сетку
+    redirect_to album_path(@album), notice: "Убрано из альбома: #{count}"
   end
 
   def add_collaborator
