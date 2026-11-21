@@ -10,23 +10,12 @@ class ShareLink < ApplicationRecord
   before_validation :generate_token, on: :create
   before_validation :set_expires_at, on: :create
 
-  scope :active,   -> { where("expires_at > ?", Time.current).where(revoked_at: nil) }
-  scope :expired,  -> { where("expires_at <= ?", Time.current) }
-  scope :revoked,  -> { where.not(revoked_at: nil) }
+  scope :active, -> { where("expires_at > ?", Time.current).where(revoked_at: nil) }
 
   def active?
     revoked_at.nil? && expires_at > Time.current
   end
 
-  def expired?
-    expires_at <= Time.current
-  end
-
-  def revoked?
-    revoked_at.present?
-  end
-
-  # Перевыпуск ссылки: старый токен умирает, создается новый
   def regenerate!
     update!(
       token: SecureRandom.urlsafe_base64(24),
@@ -43,7 +32,7 @@ class ShareLink < ApplicationRecord
     Rails.application.routes.url_helpers.public_share_url(token, host: default_host)
   end
 
-  # Найти или создать активную ссылку (если нет — создаст)
+  # Метод БЕЗ аргумента permission
   def self.find_or_create_active!(user:, shareable:)
     active
       .where(user: user, shareable: shareable)

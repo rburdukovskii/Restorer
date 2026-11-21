@@ -1,0 +1,11 @@
+<div id="share_link_input_<%= share_link.shareable_id %>">
+  <div class="flex gap-2 mb-3" data-controller="clipboard">
+    <input type="text" readonly value="<%= public_share_url(share_link.token) %>"
+           data-clipboard-target="source"
+           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 font-mono">
+    <button type="button" data-action="click->clipboard#copy"
+            class="px-4 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer">
+      Копировать
+    </button>
+  </div>
+</div>

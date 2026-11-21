@@ -17,17 +17,15 @@ class PublicSharesController < ApplicationController
       render :upload
     when Album
       if params[:photo].present?
-        # Просмотр конкретного фото из альбома
         @photo = @shareable.uploads.find_by(id: params[:photo])
         if @photo
-          @shareable = @photo # Подменяем объект для вьюхи upload
+          @shareable = @photo
           @share_link.register_view!
           render :upload
         else
           render :not_found, status: :not_found
         end
       else
-        # Просмотр самого альбома
         @share_link.register_view!
         @uploads = @shareable.uploads.recent
         render :album
@@ -54,7 +52,6 @@ class PublicSharesController < ApplicationController
     end
 
     return head :not_found unless attachment.attached?
-
     redirect_to rails_blob_url(attachment, disposition: "attachment"), allow_other_host: true
   end
 end

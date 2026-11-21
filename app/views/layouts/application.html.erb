@@ -46,8 +46,6 @@
     </main>
 
     <%= render "layouts/footer" if File.exist?(Rails.root.join("app/views/layouts/_footer.html.erb")) %>
-    <div id="share_link_modal_container"></div>
-
-    <div id="share_link_modal_container"></div>
+    <%= turbo_frame_tag "modal" %>
   </body>
 </html>

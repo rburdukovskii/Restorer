@@ -1,105 +1,64 @@
-<%= turbo_stream_from current_user, :uploads %>
+<% if user_signed_in? && !@is_public %>
+  <%= turbo_stream_from current_user, :uploads %>
+<% end %>
 
 <section class="max-w-3xl mx-auto px-6 py-16">
+  <% if @is_public %>
+    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+      <p class="text-sm text-emerald-800">
+        Просмотров: <strong><%= @share_link.views_count %></strong> · 
+        Действует до: <strong><%= @share_link.expires_at.strftime("%d.%m.%Y %H:%M") %></strong>
+      </p>
+    </div>
+  <% end %>
+
   <h1 class="text-3xl font-bold text-center mb-8">Результат</h1>
 
   <%= render "uploads/show_result", upload: @upload %>
 
-  <%# Название фото %>
+  <%# Название %>
   <div class="mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
     <div class="flex items-center justify-between mb-3">
       <h3 class="text-sm font-semibold text-gray-900">Название</h3>
-      <% if @upload.title.present? %>
+      <% if @upload.title.present? && !@is_public %>
         <span class="text-xs text-emerald-600">● сохранено</span>
       <% end %>
     </div>
 
-    <%= form_with model: @upload, url: upload_path(@upload), method: :patch, class: "flex gap-2" do |f| %>
-      <%= f.text_field :title,
-          value: @upload.title,
-          placeholder: "Например, «Закат на Байкале»",
-          class: "flex-1 px-4 py-2 border border-gray-300 rounded-lg
-                focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm" %>
-
-      <%= f.submit "Сохранить",
-          class: "px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer" %>
+    <% form_url = @is_public ? "#" : upload_path(@upload) %>
+    <%= form_with model: @upload, url: form_url, method: :patch, class: "flex gap-2" do |f| %>
+      <%= f.text_field :title, value: @upload.title, placeholder: "Название...", class: "flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 text-sm #{'bg-gray-100 cursor-not-allowed' if @is_public}", disabled: @is_public %>
+      
+      <% unless @is_public %>
+        <%= f.submit "Сохранить", class: "px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer" %>
+      <% end %>
     <% end %>
-
-    <p class="mt-2 text-xs text-gray-400">
-      Дайте название фото, чтобы было легче её найти
-    </p>
   </div>
 
   <%# Теги %>
-  <div data-controller="tag-input"
-      data-tag-input-add-url-value="<%= add_tag_upload_path(@upload) %>"
-      data-tag-input-remove-url-value="<%= remove_tag_upload_path(@upload) %>"
-      class="mt-8 p-6 bg-white rounded-2xl shadow-sm">
-
+  <div class="mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
     <h3 class="text-sm font-semibold text-gray-900 mb-3">Теги</h3>
-
-    <%# Активные (уже добавленные) теги %>
-    <div data-tag-input-target="tags" class="flex flex-wrap gap-2 mb-4">
+    <div class="flex flex-wrap gap-2 mb-4">
       <% @upload.tags.each do |tag| %>
-        <span data-tag-id="<%= tag.id %>" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
           #<%= tag.name %>
-          <button type="button"
-                  data-action="click->tag-input#remove"
-                  data-tag-id="<%= tag.id %>"
-                  data-tag-name="<%= tag.name %>"
-                  class="text-blue-500 hover:text-red-500 transition ml-1">
-            &times;
-          </button>
         </span>
       <% end %>
     </div>
-
-    <%# Поле добавления нового тега %>
-    <form data-action="submit->tag-input#add" class="flex gap-2 mb-2">
-      <input type="text"
-            data-tag-input-target="input"
-            placeholder="Добавить новый тег..."
-            autocomplete="off"
-            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg
-                    focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm">
-      <button type="submit"
-              class="px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer">
-        Добавить
-      </button>
-    </form>
-
-    <%# Подсказка перенесена сюда %>
-    <p class="text-xs text-gray-400">
-      Например: «природа», «отпуск 2026», «семья»
-    </p>
-
-    <%# Существующие теги (кнопки для быстрого добавления) %>
-    <% if @available_tags.any? %>
-      <div class="border-t border-gray-100 pt-4 mt-4">
-        <p class="text-xs text-gray-500 mb-2">Ваши существующие теги:</p>
-        <div class="flex flex-wrap gap-2">
-          <% @available_tags.each do |tag| %>
-            <button type="button"
-                    data-action="click->tag-input#addExisting"
-                    data-tag-id="<%= tag.id %>"
-                    data-tag-name="<%= tag.name %>"
-                    class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm transition cursor-pointer">
-              #<%= tag.name %>
-            </button>
-          <% end %>
-        </div>
-      </div>
+    
+    <% unless @is_public %>
+      <form data-action="submit->tag-input#add" class="flex gap-2 mb-2">
+        <input type="text" placeholder="Добавить новый тег..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 text-sm">
+        <button type="submit" class="px-5 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition text-sm cursor-pointer">Добавить</button>
+      </form>
     <% end %>
   </div>
 
-  <%# Кнопка скачивания %>
-  <%= render "uploads/download_button", upload: @upload %>
-
-  <%# Публичная ссылка %>
-  <div id="upload_share_link_<%= @upload.id %>" class="mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
-    <h3 class="text-sm font-semibold text-gray-900 mb-3">Публичная ссылка</h3>
-    <%= render "uploads/share_link",
-        upload: @upload,
-        share_link: @upload.share_links.active.order(created_at: :desc).first %>
-  </div>
+  <%# Кнопка скачивания и Публичная ссылка %>
+  <% if @is_public %>
+    <%= link_to "Скачать изображение", public_share_download_path(@share_link.token, photo: params[:photo]), class: "mt-8 block text-center w-full text-white font-semibold py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700" %>
+  <% else %>
+    <%= render "uploads/download_button", upload: @upload %>
+    <%= render "uploads/share_link", upload: @upload, share_link: @upload.share_links.active.order(created_at: :desc).first %>
+  <% end %>
 </section>

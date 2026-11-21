@@ -15,8 +15,6 @@
 
     <%# Левая часть: обложка + название %>
     <div class="flex items-center gap-6">
-
-      <%# Обложка %>
       <div class="w-32 h-32 rounded-2xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
         <% if @album.cover_image.present? %>
           <%= image_tag @album.cover_image, class: "w-full h-full object-cover" %>
@@ -27,7 +25,6 @@
         <% end %>
       </div>
 
-      <%# Название + счётчик + описание %>
       <div>
         <h1 class="text-3xl font-bold text-gray-900"><%= @album.name %></h1>
         <p class="text-gray-500 mt-1">
@@ -54,11 +51,12 @@
           data: { turbo_method: :delete, turbo_confirm: "Удалить альбом? Фото останутся в галерее." },
           class: "px-5 py-2 rounded-lg font-semibold text-red-600 bg-white border-2 border-red-500 hover:bg-red-50 transition" %>
 
-      <%= button_to "Поделиться",
-      share_links_path(shareable_type: "Album", shareable_id: @album.id),
-      method: :post,
-      form: { data: { turbo_stream: true } },
-      class: "px-5 py-2 rounded-lg font-semibold text-emerald-600 bg-white border-2 border-emerald-500 hover:bg-emerald-50 transition cursor-pointer" %>
+      <%# Кнопка «Поделиться» с обычным JS %>
+      <button type="button" 
+              onclick="document.getElementById('album_share_modal_<%= @album.id %>').classList.remove('hidden'); document.getElementById('album_share_modal_<%= @album.id %>').classList.add('flex');"
+              class="px-5 py-2 rounded-lg font-semibold text-emerald-600 bg-white border-2 border-emerald-500 hover:bg-emerald-50 transition cursor-pointer">
+        Поделиться
+      </button>
     </div>
   </div>
 
@@ -67,7 +65,6 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <% @album.uploads.each do |photo| %>
         <div class="group relative rounded-xl overflow-hidden bg-gray-100">
-          
           <%= link_to upload_path(photo), class: "block" do %>
             <% if photo.processed.attached? %>
               <%= image_tag photo.processed, class: "w-full aspect-square object-cover group-hover:scale-105 transition", alt: photo.display_title %>
@@ -75,29 +72,21 @@
               <%= image_tag photo.original, class: "w-full aspect-square object-cover group-hover:scale-105 transition", alt: photo.display_title %>
             <% end %>
 
-            <%# Информация на фото (Название и теги) %>
             <div class="absolute bottom-0 left-0 right-0 px-3 py-2 bg-black/40 backdrop-blur-sm z-10 pointer-events-none">
-              <div class="text-white text-sm font-semibold truncate">
-                <%= photo.display_title %>
-              </div>
+              <div class="text-white text-sm font-semibold truncate"><%= photo.display_title %></div>
               <% if photo.tags.any? %>
-                <div class="text-white/80 text-xs truncate mt-0.5">
-                  <%= photo.tags.map { |t| "##{t.name}" }.join(" ") %>
-                </div>
+                <div class="text-white/80 text-xs truncate mt-0.5"><%= photo.tags.map { |t| "##{t.name}" }.join(" ") %></div>
               <% end %>
             </div>
           <% end %>
 
-          <%# Кнопка "Убрать из альбома" (z-20 чтобы быть выше подписи) %>
           <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition z-20">
             <%= button_to remove_upload_album_path(@album, upload_id: photo.id),
                 method: :delete,
                 data: { turbo_confirm: "Убрать фото из альбома?" },
-                class: "w-8 h-8 rounded-full bg-white/90 hover:bg-red-500 hover:text-white
-                       flex items-center justify-center text-gray-600 transition shadow-md" do %>
+                class: "w-8 h-8 rounded-full bg-white/90 hover:bg-red-500 hover:text-white flex items-center justify-center text-gray-600 transition shadow-md" do %>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
             <% end %>
           </div>
@@ -109,44 +98,26 @@
       <div class="text-6xl mb-4">📁</div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">Альбом пуст</h3>
       <p class="text-gray-500 mb-6">Добавьте фото из вашей галереи</p>
-      <button type="button"
-              data-action="click->album-photo-picker#open"
+      <button type="button" data-action="click->album-photo-picker#open"
               class="inline-block px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition cursor-pointer">
         + Добавить первое фото
       </button>
     </div>
   <% end %>
 
-  <%# Модалка выбора фото %>
-  <div data-album-photo-picker-target="modal"
-       class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <%# Модалка выбора фото для альбома %>
+  <div data-album-photo-picker-target="modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-
-      <%# Шапка %>
       <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h2 class="text-xl font-bold text-gray-900">Выберите фото</h2>
-        <button type="button"
-                data-action="click->album-photo-picker#close"
-                class="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer">
-          &times;
-        </button>
+        <button type="button" data-action="click->album-photo-picker#close" class="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer">&times;</button>
       </div>
 
-      <%# Тело %>
       <div class="flex-1 overflow-y-auto p-6">
-
         <div class="flex items-center justify-between mb-4">
           <div class="flex gap-2">
-            <button type="button"
-                    data-action="click->album-photo-picker#selectAll"
-                    class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
-              Выбрать все
-            </button>
-            <button type="button"
-                    data-action="click->album-photo-picker#deselectAll"
-                    class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
-              Снять выделение
-            </button>
+            <button type="button" data-action="click->album-photo-picker#selectAll" class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Выбрать все</button>
+            <button type="button" data-action="click->album-photo-picker#deselectAll" class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Снять выделение</button>
           </div>
         </div>
 
@@ -156,20 +127,10 @@
           <div class="grid grid-cols-3 md:grid-cols-4 gap-3">
             <% available.each do |photo| %>
               <label class="group relative rounded-lg overflow-hidden bg-gray-100 cursor-pointer">
-                <%= image_tag (photo.processed.attached? ? photo.processed : photo.original),
-                    class: "w-full aspect-square object-cover group-hover:scale-105 transition" %>
-
-                <input type="checkbox"
-                       value="<%= photo.id %>"
-                       data-album-photo-picker-target="checkbox"
-                       data-action="change->album-photo-picker#toggle"
-                       class="sr-only">
-
-                <span class="absolute top-2 left-2 flex items-center justify-center
-                             w-5 h-5 rounded border-2 border-white bg-white/95
-                             shadow-lg transition-all duration-150">
-                  <svg class="w-3.5 h-3.5 text-blue-600 opacity-0 transition-opacity"
-                       fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3.5">
+                <%= image_tag (photo.processed.attached? ? photo.processed : photo.original), class: "w-full aspect-square object-cover group-hover:scale-105 transition" %>
+                <input type="checkbox" value="<%= photo.id %>" data-album-photo-picker-target="checkbox" data-action="change->album-photo-picker#toggle" class="sr-only">
+                <span class="absolute top-2 left-2 flex items-center justify-center w-5 h-5 rounded border-2 border-white bg-white/95 shadow-lg transition-all duration-150">
+                  <svg class="w-3.5 h-3.5 text-blue-600 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                   </svg>
                 </span>
@@ -180,34 +141,29 @@
           <div class="text-center py-12">
             <div class="text-4xl mb-2">📷</div>
             <p class="text-gray-500">Все ваши фото уже в этом альбоме</p>
-            <%= link_to "Загрузить новые", new_upload_path,
-                class: "mt-4 inline-block px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition" %>
+            <%= link_to "Загрузить новые", new_upload_path, class: "mt-4 inline-block px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition" %>
           </div>
         <% end %>
       </div>
 
-      <%# Футер %>
       <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-600">Выбрано:</span>
           <span data-album-photo-picker-target="count" class="text-xl font-bold text-gray-900">0</span>
         </div>
-
         <div class="flex gap-3">
-          <button type="button"
-                  data-action="click->album-photo-picker#close"
-                  class="px-5 py-2.5 rounded-lg font-semibold text-gray-600
-                         border border-gray-300 hover:bg-white transition cursor-pointer">
-            Отмена
-          </button>
-          <button type="button"
-                  data-action="click->album-photo-picker#submit"
-                  class="px-5 py-2.5 rounded-lg font-semibold text-white
-                         bg-blue-600 hover:bg-blue-700 transition cursor-pointer">
-            Добавить в альбом
-          </button>
+          <button type="button" data-action="click->album-photo-picker#close" class="px-5 py-2.5 rounded-lg font-semibold text-gray-600 border border-gray-300 hover:bg-white transition cursor-pointer">Отмена</button>
+          <button type="button" data-action="click->album-photo-picker#submit" class="px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition cursor-pointer">Добавить в альбом</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <%# МОДАЛКА ПУБЛИЧНОЙ ССЫЛКИ %>
+  <% active_link = @album.share_links.active.order(created_at: :desc).first || ShareLink.find_or_create_active!(user: current_user, shareable: @album) %>
+  <div id="album_share_modal_<%= @album.id %>" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+      <%= render "share_links/modal", share_link: active_link %>
     </div>
   </div>
 
