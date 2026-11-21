@@ -35,6 +35,8 @@ Rails.application.routes.draw do
       post :add_upload
       delete :remove_upload
       post   :bulk_add_uploads
+      post :add_collaborator
+      delete :remove_collaborator
     end
   end
 
@@ -44,7 +46,6 @@ Rails.application.routes.draw do
     end
   end
 
-  # Публичные роуты (только чтение)
   get "s/:token", to: "public_shares#show", as: :public_share
   get "s/:token/download", to: "public_shares#download", as: :public_share_download
 

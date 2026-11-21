@@ -115,6 +115,31 @@
     <% end %>
   </div>
 
+  <%# Лента общих альбомов (где пользователь соавтор) %>
+  <% if @shared_albums.any? %>
+    <div class="mb-8">
+      <h2 class="text-lg font-bold text-gray-900 mb-3">Общие альбомы</h2>
+      <div class="flex gap-4 overflow-x-auto pb-2">
+        <% @shared_albums.each do |album| %>
+          <%= link_to album_path(album), class: "shrink-0 w-40 group" do %>
+            <div class="relative w-40 h-40 rounded-xl overflow-hidden bg-gray-100 mb-2">
+              <% if album.cover_image.present? %>
+                <%= image_tag album.cover_image, class: "w-full h-full object-cover group-hover:scale-105 transition" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center text-gray-300 text-3xl">📁</div>
+              <% end %>
+              <div class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-white/90 backdrop-blur-sm text-[10px] font-semibold text-blue-600">
+                👥 Соавтор
+              </div>
+            </div>
+            <div class="text-sm font-medium text-gray-900 truncate"><%= album.name %></div>
+            <div class="text-xs text-gray-500">от <%= album.user.display_name %></div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <%# Лента альбомов %>
   <% if @albums.any? %>
     <div class="mb-8">

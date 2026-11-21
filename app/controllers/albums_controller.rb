@@ -1,6 +1,8 @@
 class AlbumsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload, :bulk_add_uploads]
+  before_action :set_album, only: [:show, :edit, :update, :destroy, :add_upload, :remove_upload, :bulk_add_uploads, :add_collaborator, :remove_collaborator]
+  before_action :authorize_edit!, only: [:edit, :update, :add_upload, :remove_upload, :bulk_add_uploads]
+  before_action :authorize_owner!, only: [:destroy, :add_collaborator, :remove_collaborator]
 
   def new
     @album = current_user.albums.build
@@ -42,7 +44,7 @@ class AlbumsController < ApplicationController
   end
 
   def remove_upload
-    upload = current_user.uploads.find(params[:upload_id])
+    upload = @album.uploads.find(params[:upload_id])
     @album.uploads.delete(upload)
     redirect_to album_path(@album), notice: "Фото убрано из альбома"
   end
@@ -67,10 +69,56 @@ class AlbumsController < ApplicationController
     render json: { success: true, message: "Добавлено фото: #{count}" }
   end
 
+  def add_collaborator
+    query = params[:query].to_s.strip
+    role = params[:role] || "editor"
+
+    if query.blank?
+      return redirect_to album_path(@album), alert: "Введите email или имя пользователя"
+    end
+
+    user = User.where("email = ? OR name = ?", query, query).where.not(id: current_user.id).first
+
+    if user.nil?
+      return redirect_to album_path(@album), alert: "Пользователь не найден"
+    end
+
+    collaborator = @album.album_collaborators.build(user: user, role: role, invited_by: current_user)
+
+    if collaborator.save
+      redirect_to album_path(@album), notice: "Соавтор добавлен"
+    else
+      redirect_to album_path(@album), alert: collaborator.errors.full_messages.join(", ")
+    end
+  end
+
+  def remove_collaborator
+    collaborator = @album.album_collaborators.find(params[:collaborator_id])
+    collaborator.destroy
+    redirect_to album_path(@album), notice: "Соавтор удалён"
+  end
+
   private
 
   def set_album
-    @album = current_user.albums.find(params[:id])
+    @album = Album.left_joins(:album_collaborators)
+                  .where("albums.user_id = ? OR album_collaborators.user_id = ?", current_user.id, current_user.id)
+                  .distinct
+                  .find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to gallery_path, alert: "Альбом не найден"
+  end
+
+  def authorize_edit!
+    unless @album.editable_by?(current_user)
+      redirect_to album_path(@album), alert: "У вас нет прав для редактирования"
+    end
+  end
+
+  def authorize_owner!
+    unless @album.owner?(current_user)
+      redirect_to album_path(@album), alert: "Только владелец может выполнять это действие"
+    end
   end
 
   def album_params

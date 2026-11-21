@@ -1,6 +1,4 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
@@ -8,12 +6,13 @@ class User < ApplicationRecord
   has_many :albums,  dependent: :destroy
   has_many :tags,    dependent: :destroy
   has_many :share_links, dependent: :destroy
+  has_many :album_collaborators, dependent: :destroy
+  has_many :shared_albums, through: :album_collaborators, source: :album
 
   has_one_attached :avatar
 
   validates :name, length: { maximum: 100 }, allow_blank: true
 
-   # Список ролей
   ROLES = %w[admin user guest].freeze
 
   before_save :set_default_role, if: :new_record?
@@ -42,7 +41,6 @@ class User < ApplicationRecord
     uploads.where(favorite: true).count
   end
 
-  # Проверка роли
   def admin?
     role == 'admin'
   end

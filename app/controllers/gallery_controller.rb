@@ -48,6 +48,7 @@ class GalleryController < ApplicationController
     end
 
     @albums = current_user.albums.recent
+    @shared_albums = current_user.shared_albums.recent.includes(:user)
     @tags   = current_user.tags.order(:name)
   end
 end

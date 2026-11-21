@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_21_120000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -37,6 +37,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "album_collaborators", force: :cascade do |t|
+    t.integer "album_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "invited_by_id", null: false
+    t.string "role", default: "editor", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["album_id", "user_id"], name: "index_album_collaborators_on_album_id_and_user_id", unique: true
+    t.index ["album_id"], name: "index_album_collaborators_on_album_id"
+    t.index ["invited_by_id"], name: "index_album_collaborators_on_invited_by_id"
+    t.index ["role"], name: "index_album_collaborators_on_role"
+    t.index ["user_id"], name: "index_album_collaborators_on_user_id"
   end
 
   create_table "albums", force: :cascade do |t|
@@ -68,8 +82,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
   end
 
   create_table "share_links", force: :cascade do |t|
+    t.string "access_level", default: "view", null: false
     t.datetime "created_at", null: false
     t.datetime "expires_at", null: false
+    t.string "permission", default: "view", null: false
     t.datetime "revoked_at"
     t.bigint "shareable_id", null: false
     t.string "shareable_type", null: false
@@ -78,6 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
     t.bigint "user_id", null: false
     t.integer "views_count", default: 0, null: false
     t.index ["expires_at"], name: "index_share_links_on_expires_at"
+    t.index ["shareable_type", "shareable_id", "access_level"], name: "index_share_links_on_shareable_and_access"
     t.index ["shareable_type", "shareable_id"], name: "index_share_links_on_shareable_type_and_shareable_id"
     t.index ["token"], name: "index_share_links_on_token", unique: true
     t.index ["user_id", "shareable_type", "shareable_id"], name: "index_share_links_on_user_and_shareable"
@@ -93,6 +110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
   end
 
   create_table "uploads", force: :cascade do |t|
+    t.integer "added_via_share_link_id"
     t.datetime "created_at", null: false
     t.text "description"
     t.boolean "favorite", default: false, null: false
@@ -103,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["added_via_share_link_id"], name: "index_uploads_on_added_via_share_link_id"
     t.index ["created_at"], name: "index_uploads_on_created_at"
     t.index ["favorite"], name: "index_uploads_on_favorite"
     t.index ["filter_name"], name: "index_uploads_on_filter_name"
@@ -126,6 +145,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "album_collaborators", "albums"
+  add_foreign_key "album_collaborators", "users"
+  add_foreign_key "album_collaborators", "users", column: "invited_by_id"
   add_foreign_key "albums", "users"
   add_foreign_key "photo_albums", "albums"
   add_foreign_key "photo_albums", "uploads"
@@ -133,5 +155,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_133803) do
   add_foreign_key "photo_tags", "uploads"
   add_foreign_key "share_links", "users"
   add_foreign_key "tags", "users"
+  add_foreign_key "uploads", "share_links", column: "added_via_share_link_id", on_delete: :nullify
   add_foreign_key "uploads", "users"
 end

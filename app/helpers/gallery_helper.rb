@@ -1,18 +1,14 @@
 module GalleryHelper
-  def gallery_filter_params(**overrides)
-    base = {
-      favorites:     params[:favorites],
-      without_album: params[:without_album],
-      album:         params[:album],
-      tag:           params[:tag],
-      q:             params[:q],
-      sort:          params[:sort]
-    }.compact
-
-    base.merge(overrides).compact
-  end
-
-  def gallery_filter_active?(*keys)
-    keys.any? { |k| params[k].present? }
+  def gallery_filter_active?(*filters)
+    filters.any? do |filter|
+      case filter
+      when :favorites    then params[:favorites].present?
+      when :without_album then params[:without_album].present?
+      when :album        then params[:album].present?
+      when :tag          then params[:tag].present?
+      when :q            then params[:q].present?
+      else false
+      end
+    end
   end
 end

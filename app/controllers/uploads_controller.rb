@@ -197,7 +197,21 @@ class UploadsController < ApplicationController
   private
 
   def set_upload
-    @upload = current_user.uploads.find(params[:id])
+    if action_name.in?(%w[show download])
+      # Смотреть и скачивать можно свои фото + фото из альбомов,
+      # к которым есть доступ (владелец альбома или соавтор)
+      @upload = Upload
+        .left_joins(photo_albums: { album: :album_collaborators })
+        .where(
+          "uploads.user_id = :uid OR albums.user_id = :uid OR album_collaborators.user_id = :uid",
+          uid: current_user.id
+        )
+        .distinct
+        .find(params[:id])
+    else
+      # Редактирование, удаление, теги, избранное — только свои фото
+      @upload = current_user.uploads.find(params[:id])
+    end
   end
 
   def upload_params
