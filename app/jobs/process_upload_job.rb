@@ -16,14 +16,15 @@ class ProcessUploadJob < ApplicationJob
     begin
       update_progress(upload, progress: 50)
 
-      processor = ImageProcessor.new(upload.original)
-      processed_file = processor.apply_filter(filter_slug)
-
-      upload.processed.attach(
-        io: processed_file,
-        filename: "processed_#{upload.id}.jpg",
-        content_type: "image/jpeg"
-      )
+      # Блочная форма: временный файл удалится сразу после attach,
+      # в том числе если attach упадёт.
+      ImageProcessor.new(upload.original).apply_filter(filter_slug) do |file|
+        upload.processed.attach(
+          io: file,
+          filename: "processed_#{upload.id}.jpg",
+          content_type: "image/jpeg"
+        )
+      end
 
       update_progress(upload, status: "completed", progress: 100)
 
@@ -42,7 +43,6 @@ class ProcessUploadJob < ApplicationJob
         partial: "uploads/download_button",
         locals: { upload: upload }
 
-      # Автосоздание публичной ссылки
       share_link = ShareLink.find_or_create_active!(
         user: upload.user,
         shareable: upload
@@ -55,16 +55,25 @@ class ProcessUploadJob < ApplicationJob
 
     rescue ImageProcessor::Error => e
       Rails.logger.error("Filter error: #{e.message}")
-      update_progress(upload, status: "failed", progress: 0)
-
-      upload.broadcast_replace_to upload.live_stream,
-        target: "upload_card_#{upload.id}",
-        partial: "uploads/card",
-        locals: { photo: upload }
+      mark_failed(upload)
+    rescue StandardError => e
+      # раньше такое исключение оставляло фото в статусе "processing" навсегда
+      Rails.logger.error("Upload #{upload.id} failed: #{e.class}: #{e.message}")
+      mark_failed(upload)
+      raise
     end
   end
 
   private
+
+  def mark_failed(upload)
+    update_progress(upload, status: "failed", progress: 0)
+
+    upload.broadcast_replace_to upload.live_stream,
+      target: "upload_card_#{upload.id}",
+      partial: "uploads/card",
+      locals: { photo: upload }
+  end
 
   def update_progress(upload, status: nil, progress: nil)
     attrs = {}

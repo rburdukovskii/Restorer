@@ -2,3 +2,7 @@ production:
   share_link_cleanup:
     class: ShareLinkCleanupJob
     schedule: "every day at 3am"
+
+  tmp_files_cleanup:
+    class: TmpFilesCleanupJob
+    schedule: "every hour"
